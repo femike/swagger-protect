@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    // strict
+    "strict": true,
+    "alwaysStrict": true,
+    "noEmitOnError": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "strictFunctionTypes": true,
+    "noImplicitThis": true,
+    "strictBindCallApply": true,
+    // lint
+    "noPropertyAccessFromIndexSignature": true, // eslint 
+    "noFallthroughCasesInSwitch": true, // eslint no-fallthrough
+    "noUnusedLocals": true, // eslint no-unused-vars
+    "noUnusedParameters": true, // eslint no-unused-vars
+    "allowUnreachableCode": false, // eslint no-unreachable
+    "allowUnusedLabels": false, // eslint no-unused-labels
+    // Base Strict Checks
+    "noImplicitUseStrict": false,
+    "suppressExcessPropertyErrors": false,
+    "suppressImplicitAnyIndexErrors": false,
+    "noStrictGenericChecks": false,
+    // https://esbuild.github.io/content-types/#isolated-modules
+    // "isolatedModules": true
+  }
+}

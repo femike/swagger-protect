@@ -1,0 +1,20 @@
+# source
+src
+index.ts
+package-lock.json
+tsconfig.json
+tsconfig-check.json
+tsconfig.build.json
+jest.config.ts
+.prettierrc
+
+# misc
+.DS_Store
+
+# misc
+.eslintignore
+.eslintrc.js
+
+# github
+.github
+CONTRIBUTING.md
