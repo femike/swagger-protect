@@ -9,4 +9,9 @@ export class SwaggerProtectLogInDto {
 
   @IsNotEmpty()
   password: string
+
+  constructor(login: string, password: string) {
+    this.login = login
+    this.password = password
+  }
 }

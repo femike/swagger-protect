@@ -1,13 +1,21 @@
 import { HttpStatus } from '@nestjs/common'
 import type { FastifyRequest, HookHandlerDoneFunction } from 'fastify'
 import type { FastifyReply } from 'fastify/types/reply'
+import type { RouteGenericInterface } from 'fastify/types/route'
 import * as router from 'find-my-way'
 import type { IncomingMessage, ServerResponse } from 'http'
+import type { Server } from 'http'
 import {
   ENTRY_POINT_PROTECT,
   REDIRECT_TO_LOGIN,
   SWAGGER_COOKIE_TOKEN_KEY,
 } from './constatnt'
+
+type Request = FastifyRequest<
+  RouteGenericInterface,
+  Server,
+  IncomingMessage
+> & { cookies: { [x: string]: string } }
 
 /**
  *
@@ -42,15 +50,11 @@ export function fastifyProtectSwagger(settings: {
   cookieKey?: string
   entryPath?: string
 }): (
-  req: FastifyRequest,
+  req: Request,
   reply: FastifyReply,
   next: HookHandlerDoneFunction,
 ) => void | FastifyReply {
-  return (
-    req: FastifyRequest,
-    reply: FastifyReply,
-    next: HookHandlerDoneFunction,
-  ) => {
+  return (req: Request, reply: FastifyReply, next: HookHandlerDoneFunction) => {
     const myWay = router({
       ignoreTrailingSlash: true,
       caseSensitive: false,

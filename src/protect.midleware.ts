@@ -1,6 +1,6 @@
 import { HttpStatus, Inject, Injectable, NestMiddleware } from '@nestjs/common'
 import type { NextFunction, Request, Response } from 'express'
-import { SwaggerProtectOptions, SWAGGER_PROTECT_OPTIONS } from '.'
+import { REDIRECT_TO_LOGIN, SwaggerProtectOptions, SWAGGER_COOKIE_TOKEN_KEY, SWAGGER_PROTECT_OPTIONS } from '.'
 
 @Injectable()
 export class ProtectMiddleware implements NestMiddleware {
@@ -9,10 +9,10 @@ export class ProtectMiddleware implements NestMiddleware {
     private readonly options: SwaggerProtectOptions,
   ) {}
   async use(req: Request, res: Response, next: NextFunction): Promise<void> {
-    const token = req.cookies[this.options.cookieKey]
+    const token = req.cookies[this.options.cookieKey || SWAGGER_COOKIE_TOKEN_KEY]
     if (token) {
       if (await this.options.guard(token)) next()
     }
-    res.status(HttpStatus.FOUND).redirect(this.options.loginPath)
+    res.status(HttpStatus.FOUND).redirect(this.options.loginPath || REDIRECT_TO_LOGIN)
   }
 }

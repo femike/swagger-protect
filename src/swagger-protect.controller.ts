@@ -1,3 +1,4 @@
+import { ClassSerializerInterceptor, UseInterceptors } from '@nestjs/common'
 import { Body, Controller, Get, Inject, Post, Redirect } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { SwaggerProtectOptions, SWAGGER_PROTECT_OPTIONS } from '.'
@@ -17,6 +18,7 @@ export class SwaggerProtectController {
   }
 
   @Post()
+  @UseInterceptors(ClassSerializerInterceptor)
   async post(@Body() data: SwaggerProtectLogInDto): Promise<{ token: string }> {
     if (this.options.logIn) {
       return await this.options.logIn(data)
