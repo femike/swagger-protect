@@ -4,12 +4,9 @@ import {
   MiddlewareConsumer,
   Module,
   NestModule,
-  OnModuleInit,
 } from '@nestjs/common'
-import { HttpAdapterHost } from '@nestjs/core'
 import {
-  AbstractLoader,
-  ServeStaticModuleOptions,
+  ServeStaticModule,
   serveStaticProviders,
   SERVE_STATIC_MODULE_OPTIONS,
 } from '@nestjs/serve-static'
@@ -80,6 +77,13 @@ export class SwaggerProtectCore {
  * Swagger Protect
  */
 @Module({
+  imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'ui/dist'),
+      renderPath: '/login-api/*',
+      serveRoot: '/login-api',
+    }),
+  ],
   providers: [
     {
       provide: SWAGGER_PROTECT_OPTIONS,
@@ -91,23 +95,13 @@ export class SwaggerProtectCore {
         useUI: true,
       },
     },
-    {
-      provide: SERVE_STATIC_MODULE_OPTIONS,
-      useValue: {
-        rootPath: join(__dirname, '..', 'ui/dist'),
-      },
-    },
-    ...serveStaticProviders,
   ],
+  controllers: [SwaggerProtectController],
 })
-export class SwaggerProtect implements NestModule, OnModuleInit {
+export class SwaggerProtect implements NestModule {
   constructor(
-    @Inject(SERVE_STATIC_MODULE_OPTIONS)
-    private readonly ngOptions: ServeStaticModuleOptions[],
     @Inject(SWAGGER_PROTECT_OPTIONS)
     private readonly options: SwaggerProtectOptions,
-    private readonly loader: AbstractLoader,
-    private readonly httpAdapterHost: HttpAdapterHost,
   ) {}
 
   /**
@@ -127,10 +121,5 @@ export class SwaggerProtect implements NestModule, OnModuleInit {
       module: SwaggerProtect,
       imports: [SwaggerProtectCore.forRoot(options)],
     }
-  }
-
-  onModuleInit() {
-    const { httpAdapter } = this.httpAdapterHost
-    this.loader.register(httpAdapter, this.ngOptions)
   }
 }

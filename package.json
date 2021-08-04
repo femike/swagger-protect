@@ -65,7 +65,6 @@
     "@nestjs/common": "^7.0.0 || ^8.0.0",
     "@nestjs/core": "^7.0.0 || ^8.0.0",
     "@nestjs/serve-static": "^2.2.2",
-    "find-my-way": "*",
     "class-transformer": "*",
     "class-validator": "*"
   }

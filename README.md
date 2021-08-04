@@ -1,5 +1,11 @@
 ## Swagger Protect Module
 
+
+`npm install @femike/swagger-protect`
+OR
+`yarn add @femike/swagger-protect`
+
+
 - Swagger protect Fastify hook
 - Swagger protect Nestjs module
 
