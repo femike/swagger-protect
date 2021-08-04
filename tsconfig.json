@@ -1,0 +1,30 @@
+{
+  "extends": "./tsconfig-check.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "preserveConstEnums": true,
+    "resolveJsonModule": true,
+    "target": "esnext",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+  },
+  "include": [
+    ".eslintrc.js",
+    "jest.config.ts",
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "ui",
+    "test",
+    "**/*spec.ts"
+  ]
+}
