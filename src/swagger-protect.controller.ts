@@ -1,8 +1,20 @@
-import { ClassSerializerInterceptor, UseInterceptors } from '@nestjs/common'
-import { Body, Controller, Get, Inject, Post, Redirect } from '@nestjs/common'
+import {
+  BadRequestException,
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  HttpStatus,
+  Inject,
+  Post,
+  Query,
+  Res,
+  UseInterceptors,
+} from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { SwaggerProtectOptions, SWAGGER_PROTECT_OPTIONS } from '.'
 import { SwaggerProtectLogInDto } from './dto/login.dto'
+import type { Response } from 'express'
 
 @ApiTags('swagger-protect')
 @Controller('login-api')
@@ -12,18 +24,33 @@ export class SwaggerProtectController {
     private readonly options: SwaggerProtectOptions,
   ) {}
   @Get()
-  @Redirect('/login-api/index.html')
-  entry(): void {
-    // redirect to index.html
+  entry(@Res() res: Response, @Query('backUrl') backUrl: string): void {
+    return res
+      .status(HttpStatus.FOUND)
+      .redirect(
+        `${this.options.loginPath}/index.html?backUrl=${
+          backUrl || this.options.swaggerPath
+        }`,
+      )
   }
 
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
-  async post(@Body() data: SwaggerProtectLogInDto): Promise<{ token: string }> {
-    if (this.options.logIn) {
-      return await this.options.logIn(data)
+  post(@Body() data: SwaggerProtectLogInDto):
+    | Promise<{
+        token: string
+      }>
+    | undefined {
+    if (typeof this.options.logIn !== 'undefined') {
+      if (typeof this.options.logIn === 'function') {
+        return this.options.logIn(data)
+      } else if (typeof this.options.logIn === 'object') {
+        return this.options.logIn.execute(data)
+      }
     } else {
-      throw new Error('logIn not implement in module swagger-protect')
+      throw new BadRequestException(
+        'logIn not implement in module swagger-protect, contact with system administrator resolve this problem.',
+      )
     }
   }
 }
