@@ -9,6 +9,10 @@
 <a href="https://yoomoney.ru/to/41001486944398/250"><img src="https://img.shields.io/badge/donate-%D0%AEMoney-blueviolet.svg" alt="Donate ЮMoney" /></a>
 </p>
 
+## Description
+
+A small tool to protect access to the openapi user interface. Creates a mechanism for checking the request URL: `/ api / *` and checks for the existence of a Cookie `swagger_token`, if a cookie is present, checks its validity through a callback, in case of failure, redirects to the authorization page `/login-api/index.html?backUrl=/path/to/openapi/ui`. After successful authorization, returns the user by `backUrl`.
+
 ## Installation
 
 ```bash
@@ -174,6 +178,23 @@ import { SwaggerProtect } from '@femike/swagger-protect'
 export class AppModule {}
 ```
 
+If `useUI` options is not disabled module creates controller with answered path `/login-api` on `GET` request redirect to static `index.html`  UI on `POST` passed data to callback function or injected class implemented from `SwaggerLoginInterface` response pass data to UI where on success setted Cookie.
+
+
+
+```mermaid
+graph TD;
+    REQUEST-->GUARD_CALLBACK-->COOKIE_VALIDATE
+    COOKIE_VALIDATE-->LOGIN_UI
+    COOKIE_VALIDATE-->OPENAPI
+    LOGIN_UI-->POST_REQUEST_AUTH
+    POST_REQUEST_AUTH-->LOGIN_UI
+    LOGIN_UI-->SET_COOKIE
+    SET_COOKIE-->COOKIE_VALIDATE
+    SET_COOKIE-->BACK_URL
+    BACK_URL-->OPENAPI
+```
+
 ## API Spec
 
 The `forRoot()` method takes an options object with a few useful properties.
@@ -230,8 +251,8 @@ Form send `POST` request to `/login-api` with data `{ login, password }` on resp
 
 - [x] sample nestjs fastify
 
-- [ ] test e2e samples
+- [ ] tests e2e samples
 
-- [ ] unit tests
+- [ ] units tests
 
 - [ ] inject swagger ui layout
