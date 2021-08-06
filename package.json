@@ -1,6 +1,6 @@
 {
   "name": "@femike/swagger-protect",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "protect swagger openapi ui",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
