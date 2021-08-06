@@ -8,6 +8,9 @@
     "test": "jest",
     "prebuild": "rm -rf ./dist",
     "build": "tsc -p tsconfig.build.json",
+    "build:watch": "tsc -w -p tsconfig.build.json",
+    "build:watch:express": "tsc -w -p tsconfig.build.express.json",
+    "build:watch:nest-fastify": "tsc -w -p tsconfig.build.nest-fastify.json",
     "compodoc": "compodoc -p tsconfig.build.json -s"
   },
   "repository": {
@@ -35,13 +38,14 @@
   },
   "homepage": "https://github.com/femike/swagger-protect#readme",
   "files": [
-    "dist",
-    "ui/dist"
+    "dist"
   ],
   "devDependencies": {
     "@compodoc/compodoc": "^1.1.14",
     "@nestjs/common": "^8.0.5",
+    "@types/cookie-parser": "^1.4.2",
     "@types/express": "^4.17.13",
+    "@types/node": "^16.4.12",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.4",
@@ -49,7 +53,6 @@
     "express": "^4.17.1",
     "fastify": "^3.20.1",
     "fastify-static": "4.2.2",
-    "fastify-cookie": "^5.3.1",
     "prettier": "^2.3.2",
     "supertest": "^6.1.4",
     "ts-jest": "^27.0.4",
@@ -62,10 +65,11 @@
     "@nestjs/swagger": "^5.0.9"
   },
   "peerDependencies": {
+    "cookie-parser": "^1.4.5",
+    "fastify-cookie": "^5.3.1",
     "@nestjs/common": "^7.0.0 || ^8.0.0",
     "@nestjs/core": "^7.0.0 || ^8.0.0",
     "@nestjs/serve-static": "^2.2.2",
-    "find-my-way": "*",
     "class-transformer": "*",
     "class-validator": "*"
   }

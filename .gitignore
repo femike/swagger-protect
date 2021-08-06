@@ -107,3 +107,4 @@ package-lock.json
 dist/tsconfig.build.tsbuildinfo
 documentation
 .vscode
+tsconfig.build.*.json

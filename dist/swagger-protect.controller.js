@@ -14,45 +14,59 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SwaggerProtectController = void 0;
 const common_1 = require("@nestjs/common");
-const common_2 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const _1 = require(".");
 const login_dto_1 = require("./dto/login.dto");
 let SwaggerProtectController = class SwaggerProtectController {
     options;
-    constructor(options) {
+    logIn;
+    constructor(options, logIn) {
         this.options = options;
+        this.logIn = logIn;
     }
-    entry() {
+    entry(res, backUrl) {
+        return res
+            .status(common_1.HttpStatus.FOUND)
+            .redirect(`${this.options.loginPath || _1.REDIRECT_TO_LOGIN}/index.html?backUrl=${backUrl || this.options.swaggerPath || _1.ENTRY_POINT_PROTECT}`);
     }
-    async post(data) {
-        if (this.options.logIn) {
-            return await this.options.logIn(data);
+    post(data) {
+        if (typeof this.options.logIn !== 'undefined') {
+            if (typeof this.options.logIn === 'function') {
+                if (typeof this.options.logIn.prototype.execute !== 'undefined' &&
+                    this.logIn) {
+                    return this.logIn.execute(data);
+                }
+                else {
+                    return this.options.logIn(data);
+                }
+            }
         }
         else {
-            throw new Error('logIn not implement in module swagger-protect');
+            throw new common_1.BadRequestException('logIn not implement in module swagger-protect, contact with system administrator resolve this problem.');
         }
     }
 };
 __decorate([
-    common_2.Get(),
-    common_2.Redirect('/login-api/index.html'),
+    common_1.Get(),
+    __param(0, common_1.Res()),
+    __param(1, common_1.Query('backUrl')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", void 0)
 ], SwaggerProtectController.prototype, "entry", null);
 __decorate([
-    common_2.Post(),
+    common_1.Post(),
     common_1.UseInterceptors(common_1.ClassSerializerInterceptor),
-    __param(0, common_2.Body()),
+    __param(0, common_1.Body()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [login_dto_1.SwaggerProtectLogInDto]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", Object)
 ], SwaggerProtectController.prototype, "post", null);
 SwaggerProtectController = __decorate([
     swagger_1.ApiTags('swagger-protect'),
-    common_2.Controller('login-api'),
-    __param(0, common_2.Inject(_1.SWAGGER_PROTECT_OPTIONS)),
-    __metadata("design:paramtypes", [Object])
+    common_1.Controller('login-api'),
+    __param(0, common_1.Inject(_1.SWAGGER_PROTECT_OPTIONS)),
+    __param(1, common_1.Inject(_1.SWAGGER_LOGIN)),
+    __metadata("design:paramtypes", [Object, Object])
 ], SwaggerProtectController);
 exports.SwaggerProtectController = SwaggerProtectController;
