@@ -13,9 +13,9 @@
 
 ```bash
 $ npm install @femike/swagger-protect
+```
 
-# OR
-
+```bash
 $ yarn add @femike/swagger-protect
 ```
 
@@ -39,9 +39,9 @@ fastify.addHook(
         .getRepository(TokenEntity)
         .findOneOrFail(token)
         .then(t => t.token === token),
-    cookieKey: 'swagger_token', // key must be stored in cookies on login
-    entryPath: '/api', // entry point will be protect with guard above
-    redirectPath: '/login-api', // redirect on fail guard
+    cookieKey: 'swagger_token', // key must be stored in cookies on login.
+    entryPath: '/api', // entry point will be protect with guard above.
+    redirectPath: '/login-api', // redirect on fail guard.
   }),
 )
 
@@ -67,14 +67,20 @@ If guard return `false`, user will be redirected to the page /login-api
 
 Your must create frontend application with sign-in form and set cookie with `swagger_token` key setted above on succesfuly login or use `@femike/swager-protect-ui`
 
+### Swagger protect Express middleware
+
+```typescript
+
+```
+
 ### Swagger protect NestJS Module
 
 ```typescript
-// $ touch ./src/guards/swagger.guard.ts
+// $ touch ./src/swagger/swagger.guard.ts
 
 import type { SwaggerGuardInterface } from '@femike/swagger-protect'
 
-class SwaggerGuard implements SwaggerGuardInterface {
+export class SwaggerGuard implements SwaggerGuardInterface {
   constructor(
     @Inject(YourProtectService) private readonly service: YourProtectService,
   ) {}
@@ -84,6 +90,31 @@ class SwaggerGuard implements SwaggerGuardInterface {
    */
   async canActivate(token: string): Promise<boolean> {
     return await this.service.method(token)
+  }
+}
+```
+
+```typescript
+// $ touch ./src/swagger/swagger.login.ts
+import {
+  SwaggerProtectLogInDto,
+  SwaggerLoginInterface,
+} from '@femike/swagger-protect'
+import { Inject } from '@nestjs/common'
+import { AuthService } from '../auth'
+
+/**
+ * Swagger Login
+ */
+export class SwaggerLogin implements SwaggerLoginInterface {
+  constructor(@Inject(AuthService) private readonly service: AuthService) {}
+  async execute({
+    login,
+    password,
+  }: SwaggerProtectLogInDto): Promise<{ token: string }> {
+    return this.service
+      .signIn({ login, passwrd })
+      .then(value => (value ? { token: value.token } : { token: '' }))
   }
 }
 ```
@@ -125,6 +156,54 @@ The `forRoot()` method takes an options object with a few useful properties.
 | `cookieKey?`   | string           | Key name stored in Cookie. Default `swagger_token`                                                                                              |
 | `useUI?`       | Boolean          | Use or not user interface for login to swagger ui. When loginPath was changed from `/login-api` ui will be disabled. Default `true`             |
 
-## Example
+## Examples
 
-See full example [here](https://femike.github.com/swagger-protect/tree/main/samples).
+See full example https://femike.github.com/swagger-protect/tree/main/samples.
+
+
+
+## UI
+
+### Installation
+
+```bash
+$ npm i @femike/swagger-protect-ui
+```
+
+```bash
+$ yarn add @femike/swagger-protect-ui
+```
+
+<p align="center">
+<img width="540" src="https://github.com/femike/swagger-protect-ui/raw/main/images/screen_1.png"></img>
+</p>
+
+
+
+
+
+## Roadmap
+
+- [x] Fastify Hook
+
+- [x] Express Middleware
+
+- [x] NestJS Module
+
+- [x] [UI - login](https://www.npmjs.com/package/@femike/swagger-protect-ui)
+
+- [x] [Example Page UI](https://femike.github.io/swagger-protect-ui/)
+
+- [ ] sample fastify
+
+- [ ] sample express
+
+- [x] sample nestjs express
+
+- [ ] sample nestjs fastify
+
+- [ ] test e2e samples
+
+- [ ] unit tests
+
+- [ ] inject swagger ui layout

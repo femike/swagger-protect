@@ -5,6 +5,7 @@ import { join } from 'path'
 import {
   ENTRY_POINT_PROTECT,
   fastifyProtectSwagger,
+  expressProtectSwagger,
   REDIRECT_TO_LOGIN,
   SWAGGER_COOKIE_TOKEN_KEY,
   SWAGGER_GUARD,
@@ -18,6 +19,8 @@ import type {
   SwaggerProtectAsyncOptions,
   SwaggerProtectOptions,
 } from './types'
+
+import * as cookieParser from 'cookie-parser'
 
 const UI_PATH = join(__dirname, '../..', 'swagger-protect-ui/dist')
 
@@ -42,6 +45,15 @@ class SwaggerProtectCore {
       server.addHook(
         'onRequest',
         fastifyProtectSwagger({
+          ...protect,
+          guard: this.guard || protect.guard,
+        }),
+      )
+    } else {
+      const { logIn, useUI, ...protect } = this.options
+      server.use(cookieParser())
+      server.use(
+        expressProtectSwagger({
           ...protect,
           guard: this.guard || protect.guard,
         }),
@@ -77,7 +89,19 @@ class SwaggerProtectCore {
               }),
             ]
           : [],
-      providers: [moduleOptions],
+      providers: [
+        moduleOptions,
+        {
+          provide: SWAGGER_GUARD,
+          useValue: options.guard,
+          inject: [SWAGGER_GUARD],
+        },
+        {
+          provide: SWAGGER_LOGIN,
+          useValue: options.logIn,
+          inject: [SWAGGER_LOGIN],
+        },
+      ],
       exports: [moduleOptions],
       controllers:
         moduleOptions.useValue.useUI &&

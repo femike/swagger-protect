@@ -19,23 +19,6 @@ type Request = FastifyRequest<
 > & { cookies: { [x: string]: string } }
 
 /**
- *
- * @example
- * ```typescript
- * import { fastifyProtectSwagger } from '@femike/swagger-protect'
- *
- * fastifyAdapter.getInstance().addHook('onRequest', fastifyProtectSwagger({
- *    guard: token =>
- *      getConnection()
- *        .getRepository(TokenEntity)
- *        .findOneOrFail(token)
- *        .then(t => t.token === token),
- *    cookieKey: 'swagger_token',
- *    swaggerPath: '/api',
- *    loginPath: '/login-api'
- * }))
- *
- * ```
  * @param cookieGuard Function - Callback function validate token must return boolean.
  * @param swaggerPath string - To register a parametric path,
  * use the colon before the parameter name. For wildcard, use the star.
@@ -45,7 +28,7 @@ type Request = FastifyRequest<
  * @param loginPath string - Redirect path on fail validate token.
  * @param cookieKey string - Cookie key where stored token.
  */
-export function fastifyProtectSwagger(settings: {
+function middleware(settings: {
   guard: SwaggerGuard
   loginPath?: string
   cookieKey?: string
@@ -90,4 +73,50 @@ export function fastifyProtectSwagger(settings: {
   }
 }
 
-export default fastifyProtectSwagger
+/**
+ * Fastify Middleware Swagger Protect 
+ * @example
+ * ```typescript
+ * // ./src/main.ts
+ * import { fastifyProtectSwagger } from '@femike/swagger-protect'
+ * import { getConnection } from 'typeorm'
+
+ * fastifyAdapter.getInstance().addHook('onRequest', fastifyProtectSwagger({
+ *    guard: token =>
+ *      getConnection()
+ *        .getRepository(TokenEntity)
+ *        .findOneOrFail(token)
+ *        .then(t => t.token === token),
+ *    cookieKey: 'swagger_token',
+ *    swaggerPath: '/api',
+ *    loginPath: '/login-api'
+ * }))
+ *
+ * ```
+ * @alias middleware
+ */
+export const fastifyProtectSwagger = middleware
+
+/**
+ * Express Middleware Swagger Protect
+ * @example
+ * ```typescript
+ * // ./src/main.ts
+ * import { expressProtectSwagger } from '@femike/swagger-protect'
+ * import { getConnection } from 'typeorm'
+ *
+ * app.use(expressProtectSwagger({
+ *    guard: token =>
+ *      getConnection()
+ *        .getRepository(TokenEntity)
+ *        .findOneOrFail(token)
+ *        .then(t => t.token === token),
+ *    cookieKey: 'swagger_token',
+ *    swaggerPath: '/api',
+ *    loginPath: '/login-api'
+ * }))
+ *
+ * ```
+ * @alias middleware
+ */
+export const expressProtectSwagger = middleware
