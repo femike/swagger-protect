@@ -10,6 +10,7 @@
     "build": "tsc -p tsconfig.build.json",
     "build:watch": "tsc -w -p tsconfig.build.json",
     "build:watch:express": "tsc -w -p tsconfig.build.express.json",
+    "build:watch:nest-fastify": "tsc -w -p tsconfig.build.nest-fastify.json",
     "compodoc": "compodoc -p tsconfig.build.json -s"
   },
   "repository": {

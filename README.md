@@ -102,11 +102,14 @@ bootstrap()
 // $ touch ./src/swagger/swagger.guard.ts
 
 import type { SwaggerGuardInterface } from '@femike/swagger-protect'
+import { Inject } from '@nestjs/common'
+import { AuthService } from '../auth'
 
+/**
+ * Swagger Guard
+ */
 export class SwaggerGuard implements SwaggerGuardInterface {
-  constructor(
-    @Inject(YourProtectService) private readonly service: YourProtectService,
-  ) {}
+  constructor(@Inject(AuthService) private readonly service: AuthService) {}
 
   /**
    * Method guard
@@ -116,6 +119,8 @@ export class SwaggerGuard implements SwaggerGuardInterface {
   }
 }
 ```
+
+Example `guard` must be implements from `SwaggerGuardInterface`
 
 ```typescript
 // $ touch ./src/swagger/swagger.login.ts
@@ -141,6 +146,8 @@ export class SwaggerLogin implements SwaggerLoginInterface {
   }
 }
 ```
+
+Example `login` service must be implements from `SwaggerLoginInterface`
 
 ```typescript
 // ./src/app.module.ts
@@ -174,7 +181,8 @@ The `forRoot()` method takes an options object with a few useful properties.
 | Property       | Type             | Description                                                                                                                                     |
 | -------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | `guard`        | Function / Class | Function or Class guard must be return boolean result. Class meight be implement `SwaggerGuardInterface`. Default: `(token: string) => !!token` |
-| `swaggerPath?` | string           | Path where answered swagger ui. Default: `/api`                                                                                                 |
+| `logIn`        | Function / Class | Function or Class logIn must return object with key token. Class meight be implement `SwaggerLoginInterface`. Default: `() => ({ token: '' })`  |
+| `swaggerPath?` | string           | Path where answered swagger ui. Default: `/api/*`                                                                                               |
 | `loginPath?`   | string           | Path where user will be redirect on fail guard. Default `/login-api`                                                                            |
 | `cookieKey?`   | string           | Key name stored in Cookie. Default `swagger_token`                                                                                              |
 | `useUI?`       | Boolean          | Use or not user interface for login to swagger ui. When loginPath was changed from `/login-api` ui will be disabled. Default `true`             |
@@ -195,6 +203,9 @@ $ npm i @femike/swagger-protect-ui
 $ yarn add @femike/swagger-protect-ui
 ```
 
+Default url `/login-api` UI have no settings, it must be only disabled by options `useUI`: `false` in `forRoot()` or `forRootAsync()`
+Form send `POST` request to `/login-api` with data `{ login, password }` on response set Cookie with default key `swagger_token`
+
 <p align="center">
 <img width="540" src="https://github.com/femike/swagger-protect-ui/raw/main/images/screen_1.png"></img>
 </p>
@@ -213,11 +224,11 @@ $ yarn add @femike/swagger-protect-ui
 
 - [ ] sample fastify
 
-- [ ] sample express
+- [x] sample express
 
 - [x] sample nestjs express
 
-- [ ] sample nestjs fastify
+- [x] sample nestjs fastify
 
 - [ ] test e2e samples
 
