@@ -1,3 +1,7 @@
+import type { ModuleMetadata, Type } from '@nestjs/common'
+import type { SwaggerProtectLogInDto } from './dto/login.dto'
+import type { SwaggerGuardInterface, SwaggerLoginInterface } from './interfaces'
+
 export type SwaggerGuard =
   | SwaggerGuardInterface
   | ((token: string) => boolean | Promise<boolean>)
@@ -16,11 +20,24 @@ export interface SwaggerProtectOptions {
   cookieKey?: string
   useUI?: boolean
 }
+
+export type ProtectAsyncOptions = Omit<
+  SwaggerProtectOptions,
+  'guard' | 'logIn'
+> & {
+  guard: SwaggerGuard | Type<SwaggerGuardInterface>
+  logIn: SwaggerLogin | Type<SwaggerLoginInterface>
+}
+
 /**
  * Options Factory
  */
 export interface SwaggerProtectOptionsFactory {
-  create(name?: string): Promise<SwaggerProtectOptions> | SwaggerProtectOptions
+  readonly guard: SwaggerGuardInterface
+  readonly logIn: SwaggerLoginInterface
+  options(
+    name?: string,
+  ): Promise<Partial<ProtectAsyncOptions>> | Partial<ProtectAsyncOptions>
 }
 
 /**
@@ -29,10 +46,8 @@ export interface SwaggerProtectOptionsFactory {
 export interface SwaggerProtectAsyncOptions
   extends Pick<ModuleMetadata, 'imports'> {
   name?: string
-  useExisting?: Type<SwaggerProtectOptionsFactory>
-  useClass?: Type<SwaggerProtectOptionsFactory>
   useFactory?: (
     ...args: any[]
-  ) => Promise<SwaggerProtectOptions> | SwaggerProtectOptions
+  ) => Promise<ProtectAsyncOptions> | ProtectAsyncOptions
   inject?: any[]
 }

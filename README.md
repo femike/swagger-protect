@@ -97,17 +97,20 @@ import { SwaggerProtect } from '@femike/swagger-protect'
 
 @Module({
   imports: [
-    LoggerModule
-    DatabaseOrmModuleAsync,
-    SwaggerProtect.forRoot({
-      guard: new SwaggerGuard() // or you can use a callback (token: string) => Promise<boolean>
+    LoggerModule,
+    SwaggerProtect.forRootAsync({
+      imports: [AuthModule],
+      useFactory: () => ({
+        guard: SwaggerGuard,
+        logIn: SwaggerLogin,
+        swaggerPath: '/api/*',
+      }),
     }),
   ],
   controllers: [AppController],
   providers: [HttpStrategy, AppService, AppLogger],
 })
 export class AppModule {}
-
 ```
 
 ## API Spec

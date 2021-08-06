@@ -1,19 +1,7 @@
-import { Module } from '@nestjs/common'
-import { CatsModule } from './cats/cats.module'
-import { SwaggerProtect } from '@femike/swagger-protect'
-import { SwaggerGuard, SWAGGER_PATH } from './swagger'
+import { Module } from '@nestjs/common';
+import { CatsModule } from './cats/cats.module';
 
 @Module({
-  imports: [
-    CatsModule,
-    SwaggerProtect.forRoot({
-      guard: new SwaggerGuard(),
-      logIn: async () => ({ token: '' }),
-      cookieKey: 'swagger_token',
-      loginPath: '/login-api',
-      swaggerPath: '/' + SWAGGER_PATH + '/*',
-      useUI: true,
-    }),
-  ],
+  imports: [CatsModule],
 })
 export class AppModule {}
