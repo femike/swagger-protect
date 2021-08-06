@@ -12,9 +12,14 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { SwaggerProtectOptions, SWAGGER_PROTECT_OPTIONS } from '.'
+import {
+  SWAGGER_PROTECT_OPTIONS,
+  REDIRECT_TO_LOGIN,
+  ENTRY_POINT_PROTECT,
+} from '.'
 import { SwaggerProtectLogInDto } from './dto/login.dto'
 import type { Response } from 'express'
+import type { SwaggerProtectOptions } from './types'
 
 @ApiTags('swagger-protect')
 @Controller('login-api')
@@ -28,8 +33,8 @@ export class SwaggerProtectController {
     return res
       .status(HttpStatus.FOUND)
       .redirect(
-        `${this.options.loginPath}/index.html?backUrl=${
-          backUrl || this.options.swaggerPath
+        `${this.options.loginPath || REDIRECT_TO_LOGIN}/index.html?backUrl=${
+          backUrl || this.options.swaggerPath || ENTRY_POINT_PROTECT
         }`,
       )
   }

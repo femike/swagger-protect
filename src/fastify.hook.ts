@@ -10,6 +10,7 @@ import {
   REDIRECT_TO_LOGIN,
   SWAGGER_COOKIE_TOKEN_KEY,
 } from './constatnt'
+import type { SwaggerGuard } from './types'
 
 type Request = FastifyRequest<
   RouteGenericInterface,
@@ -24,31 +25,31 @@ type Request = FastifyRequest<
  * import { fastifyProtectSwagger } from '@femike/swagger-protect'
  *
  * fastifyAdapter.getInstance().addHook('onRequest', fastifyProtectSwagger({
- *    cookieGuard: token =>
+ *    guard: token =>
  *      getConnection()
  *        .getRepository(TokenEntity)
  *        .findOneOrFail(token)
  *        .then(t => t.token === token),
  *    cookieKey: 'swagger_token',
- *    entryPath: '/api',
- *    redirectPath: '/login-api'
+ *    swaggerPath: '/api',
+ *    loginPath: '/login-api'
  * }))
  *
  * ```
  * @param cookieGuard Function - Callback function validate token must return boolean.
- * @param entryPath string - To register a parametric path,
+ * @param swaggerPath string - To register a parametric path,
  * use the colon before the parameter name. For wildcard, use the star.
  * Remember that static routes are always checked before parametric and wildcard.
  * - Sensetive ignored by default
  * - Trailing slash ignored by default
- * @param redirectPath string - Redirect path on fail validate token.
+ * @param loginPath string - Redirect path on fail validate token.
  * @param cookieKey string - Cookie key where stored token.
  */
 export function fastifyProtectSwagger(settings: {
-  cookieGuard: (token: string) => boolean | Promise<boolean>
-  redirectPath?: string
+  guard: SwaggerGuard
+  loginPath?: string
   cookieKey?: string
-  entryPath?: string
+  swaggerPath?: string
 }): (
   req: Request,
   reply: FastifyReply,
@@ -63,17 +64,23 @@ export function fastifyProtectSwagger(settings: {
     })
     myWay.on(
       ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
-      settings.entryPath || ENTRY_POINT_PROTECT,
+      settings.swaggerPath || ENTRY_POINT_PROTECT,
       async () => {
         const token =
           req.cookies[settings.cookieKey || SWAGGER_COOKIE_TOKEN_KEY]
         if (token) {
-          if (await settings.cookieGuard(token)) return next()
+          if (typeof settings.guard === 'function') {
+            if (await settings.guard(token)) return next()
+          } else if (typeof settings.guard === 'object') {
+            if (await settings.guard.canActivate(token)) return next()
+          }
         }
 
-        return reply
-          .status(HttpStatus.FOUND)
-          .redirect(settings.redirectPath || REDIRECT_TO_LOGIN)
+        const url =
+          (settings.loginPath || REDIRECT_TO_LOGIN) +
+          `?backUrl=${escape(req.url)}`
+
+        return reply.status(HttpStatus.FOUND).redirect(url)
       },
     )
     return myWay.lookup(
