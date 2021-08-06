@@ -24,6 +24,7 @@ $ yarn add @femike/swagger-protect
 Easy way to protect swagger with fastify use a hook.
 
 ```typescript
+// ./src/main.ts
 import { fastifyProtectSwagger } from '@femike/swagger-protect'
 import { getConnection } from 'typeorm'
 import { TokenEntity } from 'your-application/src/entities'
@@ -65,13 +66,14 @@ When guard return `true`, hook go to the next way and show swagger open api page
 
 If guard return `false`, user will be redirected to the page /login-api
 
-Your must create frontend application with sign-in form and set cookie with `swagger_token` key setted above on succesfuly login or use `@femike/swager-protect-ui`
+Your must create frontend application with sign-in form and set cookie with `swagger_token` key setted above on succesfuly login or use `@femike/swager-protect-ui` see below.
 
 ### Swagger protect Express middleware
 
 Cookie-parser must be import and used as middleware.
 
 ```typescript
+// ./src/main.ts
 import { expressProtectSwagger } from '@femike/swagger-protect'
 import express from 'express'
 import { createSwagger } from './swagger'
