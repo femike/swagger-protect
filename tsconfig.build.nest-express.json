@@ -4,7 +4,7 @@
     "removeComments": true,
     "sourceMap": false,
     "composite": false,
-    "outDir": "./samples/express/node_modules/@femike/swagger-protect/dist",
+    "outDir": "./samples/nest-express/node_modules/@femike/swagger-protect/dist",
   },
   "include": [
     "src/**/*"

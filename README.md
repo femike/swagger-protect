@@ -69,8 +69,29 @@ Your must create frontend application with sign-in form and set cookie with `swa
 
 ### Swagger protect Express middleware
 
-```typescript
+Cookie-parser must be import and used as middleware.
 
+```typescript
+import { expressProtectSwagger } from '@femike/swagger-protect'
+import express from 'express'
+import { createSwagger } from './swagger'
+import cookieParser from 'cookie-parser' // cookie-parser must be import!
+const app = express()
+
+app.get('/', (req, res) => res.send('Home Page <a href="/api">API</a>'))
+
+async function bootstrap() {
+  app.use(cookieParser())
+  app.use(
+    expressProtectSwagger({
+      guard: (token: string) => !!token,
+    }),
+  )
+  createSwagger(app).listen(3000, () => {
+    console.log(`Application is running on: ${undefined}`)
+  })
+}
+bootstrap()
 ```
 
 ### Swagger protect NestJS Module
@@ -160,8 +181,6 @@ The `forRoot()` method takes an options object with a few useful properties.
 
 See full example https://femike.github.com/swagger-protect/tree/main/samples.
 
-
-
 ## UI
 
 ### Installation
@@ -177,10 +196,6 @@ $ yarn add @femike/swagger-protect-ui
 <p align="center">
 <img width="540" src="https://github.com/femike/swagger-protect-ui/raw/main/images/screen_1.png"></img>
 </p>
-
-
-
-
 
 ## Roadmap
 

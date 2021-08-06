@@ -4,6 +4,10 @@ import type { FastifyReply } from 'fastify/types/reply'
 import type { RouteGenericInterface } from 'fastify/types/route'
 import * as router from 'find-my-way'
 import type { IncomingMessage, ServerResponse } from 'http'
+import type {
+  Request as ExpressRequest,
+  Response as ExpressResponse,
+} from 'express'
 import type { Server } from 'http'
 import {
   ENTRY_POINT_PROTECT,
@@ -12,7 +16,7 @@ import {
 } from './constatnt'
 import type { SwaggerGuard } from './types'
 
-type Request = FastifyRequest<
+type FastiRequest = FastifyRequest<
   RouteGenericInterface,
   Server,
   IncomingMessage
@@ -28,17 +32,16 @@ type Request = FastifyRequest<
  * @param loginPath string - Redirect path on fail validate token.
  * @param cookieKey string - Cookie key where stored token.
  */
-function middleware(settings: {
+function middleware<
+  Req extends FastiRequest | ExpressRequest,
+  Res extends ExpressResponse | FastifyReply,
+>(settings: {
   guard: SwaggerGuard
   loginPath?: string
   cookieKey?: string
   swaggerPath?: string
-}): (
-  req: Request,
-  reply: FastifyReply,
-  next: HookHandlerDoneFunction,
-) => void | FastifyReply {
-  return (req: Request, reply: FastifyReply, next: HookHandlerDoneFunction) => {
+}): (req: Req, reply: Res, next: HookHandlerDoneFunction) => void | Res {
+  return (req: Req, reply: Res, next: HookHandlerDoneFunction) => {
     const myWay = router({
       ignoreTrailingSlash: true,
       caseSensitive: false,
