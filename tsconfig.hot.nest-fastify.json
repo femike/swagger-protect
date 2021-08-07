@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    "outDir": "./samples/nest-fastify/node_modules/@femike/swagger-protect/dist",
+  },
+}

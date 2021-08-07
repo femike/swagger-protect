@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    "outDir": "./samples/express/node_modules/@femike/swagger-protect/dist",
+  },
+}
