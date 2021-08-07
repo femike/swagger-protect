@@ -14,17 +14,15 @@
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
+    "types": [
+      "jest"
+    ]
   },
   "include": [
-    ".eslintrc.js",
-    "jest.config.ts",
-    "src/**/*"
+    "**/*.ts",
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "ui",
-    "test",
-    "**/*spec.ts"
   ]
 }

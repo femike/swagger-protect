@@ -1,12 +1,20 @@
 # source
 src
 index.ts
+
+# dist
+*.tsbuildinfo
+
+# config
 package-lock.json
 tsconfig.json
 tsconfig-check.json
 tsconfig.build.json
 jest.config.ts
 .prettierrc
+
+# IDE
+.vscode
 
 # misc
 .DS_Store
