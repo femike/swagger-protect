@@ -37,7 +37,7 @@ import { TokenEntity } from 'your-application/src/entities'
 fastify.addHook(
   'onRequest',
   fastifyProtectSwagger({
-    cookieGuard: (
+    guard: (
       token, // must return boolean result (token: string) => Promise<boolean> for example typeorm find token on fail return false
     ) =>
       getConnection()
@@ -45,8 +45,8 @@ fastify.addHook(
         .findOneOrFail(token)
         .then(t => t.token === token),
     cookieKey: 'swagger_token', // key must be stored in cookies on login.
-    entryPath: '/api', // entry point will be protect with guard above.
-    redirectPath: '/login-api', // redirect on fail guard.
+    swaggerPath: '/api', // entry point will be protect with guard above.
+    loginPath: '/login-api', // redirect on fail guard.
   }),
 )
 
@@ -54,14 +54,14 @@ fastify.addHook(
 fastifyAdapter.getInstance().addHook(
   'onRequest',
   fastifyProtectSwagger({
-    cookieGuard: token =>
+    guard: token =>
       getConnection()
         .getRepository(TokenEntity)
         .findOneOrFail(token)
         .then(t => t.token === token),
     cookieKey: 'swagger_token',
-    entryPath: '/api',
-    redirectPath: '/login-api',
+    swaggerPath: '/api',
+    loginPath: '/login-api',
   }),
 )
 ```
