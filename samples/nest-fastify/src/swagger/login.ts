@@ -11,6 +11,7 @@ export class SwaggerLogin implements SwaggerLoginInterface {
     login,
     password,
   }: SwaggerProtectLogInDto): Promise<{ token: string }> {
+    console.debug(login, password)
     return { token: '' }
   }
 }
