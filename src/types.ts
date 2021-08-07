@@ -15,7 +15,7 @@ export type SwaggerLogin =
 export interface SwaggerProtectOptions {
   guard: SwaggerGuard
   logIn: SwaggerLogin
-  swaggerPath?: string
+  swaggerPath?: string | RegExp
   loginPath?: string
   cookieKey?: string
   useUI?: boolean

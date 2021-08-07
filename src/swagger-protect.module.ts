@@ -1,11 +1,19 @@
-import { DynamicModule, Global, Inject, Module, Provider } from '@nestjs/common'
+import {
+  DynamicModule,
+  Global,
+  Inject,
+  Module,
+  OnModuleInit,
+  Provider,
+} from '@nestjs/common'
 import { HttpAdapterHost } from '@nestjs/core'
 import { ServeStaticModule } from '@nestjs/serve-static'
+import * as cookieParser from 'cookie-parser'
 import { join } from 'path'
 import {
   ENTRY_POINT_PROTECT,
-  fastifyProtectSwagger,
   expressProtectSwagger,
+  fastifyProtectSwagger,
   REDIRECT_TO_LOGIN,
   SWAGGER_COOKIE_TOKEN_KEY,
   SWAGGER_GUARD,
@@ -20,27 +28,30 @@ import type {
   SwaggerProtectOptions,
 } from './types'
 
-import * as cookieParser from 'cookie-parser'
-
 const UI_PATH = join(__dirname, '../..', 'swagger-protect-ui/dist')
+
+const isClass = (ob: any) => /^\s*?class/.test(ob.toString())
 
 /**
  * Swagger Protect Core
  */
 @Global()
 @Module({})
-class SwaggerProtectCore {
+class SwaggerProtectCore implements OnModuleInit {
   constructor(
     private readonly httpAdapterHost: HttpAdapterHost,
     @Inject(SWAGGER_PROTECT_OPTIONS)
     private readonly options: SwaggerProtectOptions,
     @Inject(SWAGGER_GUARD)
     private readonly guard: SwaggerGuardInterface,
-  ) {
+  ) {}
+
+  onModuleInit() {
     const { httpAdapter } = this.httpAdapterHost
     const server = httpAdapter.getInstance()
 
     if (Object.keys(server).includes('addHook')) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { logIn, useUI, ...protect } = this.options
       server.addHook(
         'onRequest',
@@ -50,6 +61,7 @@ class SwaggerProtectCore {
         }),
       )
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { logIn, useUI, ...protect } = this.options
       server.use(cookieParser())
       server.use(
@@ -73,8 +85,24 @@ class SwaggerProtectCore {
       },
     }
 
+    // @todo more expansive check
     if (options.loginPath?.includes('*'))
       throw new Error('`loginPath` must not contain (*) wildcards.')
+
+    const swaggerLoginProvide: Provider =
+      typeof options.logIn === 'function'
+        ? {
+            provide: SWAGGER_LOGIN,
+            useClass: class SwaggerLogin {
+              constructor(readonly execute = options.logIn) {}
+            },
+            inject: [SWAGGER_LOGIN],
+          }
+        : {
+            provide: SWAGGER_LOGIN,
+            useValue: options.logIn,
+            inject: [SWAGGER_LOGIN],
+          }
 
     return {
       module: SwaggerProtectCore,
@@ -96,11 +124,7 @@ class SwaggerProtectCore {
           useValue: options.guard,
           inject: [SWAGGER_GUARD],
         },
-        {
-          provide: SWAGGER_LOGIN,
-          useValue: options.logIn,
-          inject: [SWAGGER_LOGIN],
-        },
+        swaggerLoginProvide,
       ],
       exports: [moduleOptions],
       controllers:
@@ -151,18 +175,25 @@ class SwaggerProtectCore {
     if (typeof options.useFactory !== 'undefined') {
       const { useUI, loginPath, guard, logIn } = $options.useFactory()
 
-      module.providers.push({
-        provide: SWAGGER_GUARD,
-        useClass: guard,
-        inject: SWAGGER_GUARD,
-      } as Provider)
+      module.providers.push(
+        this.createProvider(
+          guard,
+          SWAGGER_GUARD,
+          class SwaggerGuard {
+            constructor(readonly canActivate = guard) {}
+          },
+        ),
+      )
 
-      module.providers.push({
-        provide: SWAGGER_LOGIN,
-        useClass: logIn,
-        inject: SWAGGER_LOGIN,
-      } as Provider)
-
+      module.providers.push(
+        this.createProvider(
+          logIn,
+          SWAGGER_LOGIN,
+          class SwaggerLogin {
+            constructor(readonly execute = logIn) {}
+          },
+        ),
+      )
       const importStatic = this.provideUI(useUI, loginPath)
         ? [
             ServeStaticModule.forRoot({
@@ -183,6 +214,36 @@ class SwaggerProtectCore {
     }
 
     return module
+  }
+
+  private static createProvider(
+    ob: any,
+    symbol: string,
+    asClass: any,
+  ): Provider {
+    if (typeof ob === 'function') {
+      if (isClass(ob)) {
+        return {
+          provide: symbol,
+          useClass: ob,
+          inject: [symbol],
+        }
+      } else {
+        return {
+          provide: symbol,
+          useClass: asClass,
+          inject: [symbol],
+        }
+      }
+    } else if (typeof ob === 'object') {
+      return {
+        provide: symbol,
+        useValue: ob,
+        inject: [symbol],
+      } as Provider
+    }
+
+    return {} as Provider
   }
 
   private static async createAsyncProviders(
@@ -256,27 +317,25 @@ class SwaggerProtectCore {
  * ```
  */
 @Module({
-  imports: [
-    ServeStaticModule.forRoot({
-      rootPath: UI_PATH,
-      renderPath: REDIRECT_TO_LOGIN + '/*',
-      serveRoot: REDIRECT_TO_LOGIN,
-    }),
-  ],
   providers: [
     {
       provide: SWAGGER_PROTECT_OPTIONS,
       useValue: {
-        guard: (token: string) => !!token,
-        logIn: async () => ({ token: '' }),
         cookieKey: SWAGGER_COOKIE_TOKEN_KEY,
         loginPath: REDIRECT_TO_LOGIN,
         swaggerPath: ENTRY_POINT_PROTECT,
-        useUI: true,
+        useUI: false,
+      },
+    },
+    {
+      provide: SWAGGER_GUARD,
+      useClass: class SwaggerGuard {
+        async canActivate() {
+          return false
+        }
       },
     },
   ],
-  controllers: [SwaggerProtectController],
 })
 export class SwaggerProtect extends SwaggerProtectCore {
   public static forRoot(options: SwaggerProtectOptions): DynamicModule {

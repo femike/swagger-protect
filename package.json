@@ -1,6 +1,6 @@
 {
   "name": "@femike/swagger-protect",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "protect swagger openapi ui",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -9,8 +9,8 @@
     "prebuild": "rm -rf ./dist",
     "build": "tsc -p tsconfig.build.json",
     "build:watch": "tsc -w -p tsconfig.build.json",
-    "build:watch:express": "tsc -w -p tsconfig.build.express.json",
-    "build:watch:nest-fastify": "tsc -w -p tsconfig.build.nest-fastify.json",
+    "build:watch:express": "tsc -w -p tsconfig.hot.express.json",
+    "build:watch:nest-fastify": "tsc -w -p tsconfig.hot.nest-fastify.json",
     "compodoc": "compodoc -p tsconfig.build.json -s"
   },
   "repository": {
@@ -68,9 +68,10 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "@nestjs/swagger": "^5.0.9"
+    "path-to-regexp": "^3.2.0"
   },
   "peerDependencies": {
+    "@nestjs/swagger": "^5.0.9",
     "@nestjs/common": "^7.0.0 || ^8.0.0",
     "@nestjs/core": "^7.0.0 || ^8.0.0",
     "@nestjs/serve-static": "^2.2.2",

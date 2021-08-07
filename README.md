@@ -178,9 +178,27 @@ import { SwaggerProtect } from '@femike/swagger-protect'
 export class AppModule {}
 ```
 
-If `useUI` options is not disabled module creates controller with answered path `/login-api` on `GET` request redirect to static `index.html`  UI on `POST` passed data to callback function or injected class implemented from `SwaggerLoginInterface` response pass data to UI where on success setted Cookie.
+The controller `login-api` uses `ClassSerializer` you have to add ValidationPipe and container for fallback errors.
 
+```typescript
+// ./src/main.ts
 
+  ...
+
+    app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      disableErrorMessages: false,
+      enableDebugMessages: true,
+    }),
+  )
+  useContainer(app.select(AppModule), { fallbackOnErrors: true })
+
+  ...
+
+```
+
+If `useUI` options is not disabled module creates controller with answered path `/login-api` on `GET` request redirect to static `index.html` UI on `POST` passed data to callback function or injected class implemented from `SwaggerLoginInterface` response pass data to UI where on success setted Cookie.
 
 ```mermaid
 graph TD;
@@ -199,14 +217,14 @@ graph TD;
 
 The `forRoot()` method takes an options object with a few useful properties.
 
-| Property       | Type             | Description                                                                                                                                     |
-| -------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `guard`        | Function / Class | Function or Class guard must be return boolean result. Class meight be implement `SwaggerGuardInterface`. Default: `(token: string) => !!token` |
-| `logIn`        | Function / Class | Function or Class logIn must return object with key token. Class meight be implement `SwaggerLoginInterface`. Default: `() => ({ token: '' })`  |
-| `swaggerPath?` | string           | Path where answered swagger ui. Default: `/api/*`                                                                                               |
-| `loginPath?`   | string           | Path where user will be redirect on fail guard. Default `/login-api`                                                                            |
-| `cookieKey?`   | string           | Key name stored in Cookie. Default `swagger_token`                                                                                              |
-| `useUI?`       | Boolean          | Use or not user interface for login to swagger ui. When loginPath was changed from `/login-api` ui will be disabled. Default `true`             |
+| Property       | Type             | Description                                                                                                                                                                                                                                                                                                                                            |
+| -------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `guard`        | Function / Class | Function or Class guard must be return boolean result. Class meight be implement `SwaggerGuardInterface`. Default: `(token: string) => !!token`                                                                                                                                                                                                        |
+| `logIn`        | Function / Class | Function or Class logIn must return object with key token. Class meight be implement `SwaggerLoginInterface`. Default: `() => ({ token: '' })`                                                                                                                                                                                                         |
+| `swaggerPath?` | string / RegExp  | The paths must be protected. Two entry points must be protected `/api/json` and `/api/static/index.html` type String meight use named parameters are defined by prefixing a colon, No wildcard asterisk (\*) - use parameters instead ((.\*) or :splat\*) Default: RegExp `/^\/api\/(json\|static\/index.html)(?:\/)?$` for example string `/api/(.*)` |
+| `loginPath?`   | string           | Path where user will be redirect on fail guard. Default `/login-api`                                                                                                                                                                                                                                                                                   |
+| `cookieKey?`   | string           | Key name stored in Cookie. Default `swagger_token`                                                                                                                                                                                                                                                                                                     |
+| `useUI?`       | Boolean          | Use or not user interface for login to swagger ui. When loginPath was changed from `/login-api` ui will be disabled. Default `true`                                                                                                                                                                                                                    |
 
 ## Examples
 

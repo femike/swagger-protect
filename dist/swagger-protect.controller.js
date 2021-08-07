@@ -30,16 +30,18 @@ let SwaggerProtectController = class SwaggerProtectController {
             .redirect(`${this.options.loginPath || _1.REDIRECT_TO_LOGIN}/index.html?backUrl=${backUrl || this.options.swaggerPath || _1.ENTRY_POINT_PROTECT}`);
     }
     post(data) {
-        if (typeof this.options.logIn !== 'undefined') {
-            if (typeof this.options.logIn === 'function') {
-                if (typeof this.options.logIn.prototype.execute !== 'undefined' &&
-                    this.logIn) {
-                    return this.logIn.execute(data);
-                }
-                else {
-                    return this.options.logIn(data);
-                }
-            }
+        if (typeof this.logIn !== 'undefined') {
+            return this.logIn
+                .execute(data)
+                .then(result => {
+                if (!result.token)
+                    throw new common_1.ForbiddenException();
+                else
+                    return result;
+            })
+                .catch(err => {
+                throw err;
+            });
         }
         else {
             throw new common_1.BadRequestException('logIn not implement in module swagger-protect, contact with system administrator resolve this problem.');
@@ -56,6 +58,7 @@ __decorate([
 ], SwaggerProtectController.prototype, "entry", null);
 __decorate([
     common_1.Post(),
+    swagger_1.ApiForbiddenResponse(),
     common_1.UseInterceptors(common_1.ClassSerializerInterceptor),
     __param(0, common_1.Body()),
     __metadata("design:type", Function),

@@ -3,6 +3,7 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  ForbiddenException,
   Get,
   HttpStatus,
   Inject,
@@ -11,7 +12,7 @@ import {
   Res,
   UseInterceptors,
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiForbiddenResponse, ApiTags } from '@nestjs/swagger'
 import type { Response } from 'express'
 import {
   ENTRY_POINT_PROTECT,
@@ -44,23 +45,23 @@ export class SwaggerProtectController {
   }
 
   @Post()
+  @ApiForbiddenResponse()
   @UseInterceptors(ClassSerializerInterceptor)
   post(@Body() data: SwaggerProtectLogInDto):
     | Promise<{
         token: string
       }>
     | undefined {
-    if (typeof this.options.logIn !== 'undefined') {
-      if (typeof this.options.logIn === 'function') {
-        if (
-          typeof this.options.logIn.prototype.execute !== 'undefined' &&
-          this.logIn
-        ) {
-          return this.logIn.execute(data)
-        } else {
-          return this.options.logIn(data)
-        }
-      }
+    if (typeof this.logIn !== 'undefined') {
+      return this.logIn
+        .execute(data)
+        .then(result => {
+          if (!result.token) throw new ForbiddenException()
+          else return result
+        })
+        .catch(err => {
+          throw err
+        })
     } else {
       throw new BadRequestException(
         'logIn not implement in module swagger-protect, contact with system administrator resolve this problem.',

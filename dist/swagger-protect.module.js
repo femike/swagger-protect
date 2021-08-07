@@ -17,11 +17,12 @@ exports.SwaggerProtect = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@nestjs/core");
 const serve_static_1 = require("@nestjs/serve-static");
+const cookieParser = require("cookie-parser");
 const path_1 = require("path");
 const _1 = require(".");
 const swagger_protect_controller_1 = require("./swagger-protect.controller");
-const cookieParser = require("cookie-parser");
 const UI_PATH = path_1.join(__dirname, '../..', 'swagger-protect-ui/dist');
+const isClass = (ob) => /^\s*?class/.test(ob.toString());
 let SwaggerProtectCore = SwaggerProtectCore_1 = class SwaggerProtectCore {
     httpAdapterHost;
     options;
@@ -30,6 +31,8 @@ let SwaggerProtectCore = SwaggerProtectCore_1 = class SwaggerProtectCore {
         this.httpAdapterHost = httpAdapterHost;
         this.options = options;
         this.guard = guard;
+    }
+    onModuleInit() {
         const { httpAdapter } = this.httpAdapterHost;
         const server = httpAdapter.getInstance();
         if (Object.keys(server).includes('addHook')) {
@@ -61,6 +64,22 @@ let SwaggerProtectCore = SwaggerProtectCore_1 = class SwaggerProtectCore {
         };
         if (options.loginPath?.includes('*'))
             throw new Error('`loginPath` must not contain (*) wildcards.');
+        const swaggerLoginProvide = typeof options.logIn === 'function'
+            ? {
+                provide: _1.SWAGGER_LOGIN,
+                useClass: class SwaggerLogin {
+                    execute;
+                    constructor(execute = options.logIn) {
+                        this.execute = execute;
+                    }
+                },
+                inject: [_1.SWAGGER_LOGIN],
+            }
+            : {
+                provide: _1.SWAGGER_LOGIN,
+                useValue: options.logIn,
+                inject: [_1.SWAGGER_LOGIN],
+            };
         return {
             module: SwaggerProtectCore_1,
             imports: moduleOptions.useValue.useUI &&
@@ -80,11 +99,7 @@ let SwaggerProtectCore = SwaggerProtectCore_1 = class SwaggerProtectCore {
                     useValue: options.guard,
                     inject: [_1.SWAGGER_GUARD],
                 },
-                {
-                    provide: _1.SWAGGER_LOGIN,
-                    useValue: options.logIn,
-                    inject: [_1.SWAGGER_LOGIN],
-                },
+                swaggerLoginProvide,
             ],
             exports: [moduleOptions],
             controllers: moduleOptions.useValue.useUI &&
@@ -119,16 +134,18 @@ let SwaggerProtectCore = SwaggerProtectCore_1 = class SwaggerProtectCore {
         };
         if (typeof options.useFactory !== 'undefined') {
             const { useUI, loginPath, guard, logIn } = $options.useFactory();
-            module.providers.push({
-                provide: _1.SWAGGER_GUARD,
-                useClass: guard,
-                inject: _1.SWAGGER_GUARD,
-            });
-            module.providers.push({
-                provide: _1.SWAGGER_LOGIN,
-                useClass: logIn,
-                inject: _1.SWAGGER_LOGIN,
-            });
+            module.providers.push(this.createProvider(guard, _1.SWAGGER_GUARD, class SwaggerGuard {
+                canActivate;
+                constructor(canActivate = guard) {
+                    this.canActivate = canActivate;
+                }
+            }));
+            module.providers.push(this.createProvider(logIn, _1.SWAGGER_LOGIN, class SwaggerLogin {
+                execute;
+                constructor(execute = logIn) {
+                    this.execute = execute;
+                }
+            }));
             const importStatic = this.provideUI(useUI, loginPath)
                 ? [
                     serve_static_1.ServeStaticModule.forRoot({
@@ -147,6 +164,32 @@ let SwaggerProtectCore = SwaggerProtectCore_1 = class SwaggerProtectCore {
             };
         }
         return module;
+    }
+    static createProvider(ob, symbol, asClass) {
+        if (typeof ob === 'function') {
+            if (isClass(ob)) {
+                return {
+                    provide: symbol,
+                    useClass: ob,
+                    inject: [symbol],
+                };
+            }
+            else {
+                return {
+                    provide: symbol,
+                    useClass: asClass,
+                    inject: [symbol],
+                };
+            }
+        }
+        else if (typeof ob === 'object') {
+            return {
+                provide: symbol,
+                useValue: ob,
+                inject: [symbol],
+            };
+        }
+        return {};
     }
     static async createAsyncProviders(options) {
         if (options.useFactory) {
@@ -185,27 +228,25 @@ let SwaggerProtect = class SwaggerProtect extends SwaggerProtectCore {
 };
 SwaggerProtect = __decorate([
     common_1.Module({
-        imports: [
-            serve_static_1.ServeStaticModule.forRoot({
-                rootPath: UI_PATH,
-                renderPath: _1.REDIRECT_TO_LOGIN + '/*',
-                serveRoot: _1.REDIRECT_TO_LOGIN,
-            }),
-        ],
         providers: [
             {
                 provide: _1.SWAGGER_PROTECT_OPTIONS,
                 useValue: {
-                    guard: (token) => !!token,
-                    logIn: async () => ({ token: '' }),
                     cookieKey: _1.SWAGGER_COOKIE_TOKEN_KEY,
                     loginPath: _1.REDIRECT_TO_LOGIN,
                     swaggerPath: _1.ENTRY_POINT_PROTECT,
-                    useUI: true,
+                    useUI: false,
+                },
+            },
+            {
+                provide: _1.SWAGGER_GUARD,
+                useClass: class SwaggerGuard {
+                    async canActivate() {
+                        return false;
+                    }
                 },
             },
         ],
-        controllers: [swagger_protect_controller_1.SwaggerProtectController],
     })
 ], SwaggerProtect);
 exports.SwaggerProtect = SwaggerProtect;
