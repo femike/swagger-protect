@@ -34,7 +34,6 @@ typings/
 .env.test
 
 ui/swagger-protect-ui
-package-lock.json
 dist/tsconfig.build.tsbuildinfo
 documentation
 .vscode

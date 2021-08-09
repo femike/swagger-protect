@@ -1,0 +1,17 @@
+# !bin/bash
+
+DIR=$(pwd)
+
+cd ./samples/nest-fastify/
+npm install
+
+cd ../nest-express/
+npm install
+
+cd ../express/
+npm install
+
+cd $DIR
+
+# # cd ../fastify/
+# # npm install

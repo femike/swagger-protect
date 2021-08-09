@@ -1,16 +1,18 @@
 {
   "name": "@femike/swagger-protect",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "protect swagger openapi ui",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
     "test": "jest",
+    "dep:install": ".github/ci",
     "prebuild": "rm -rf ./dist",
     "build": "tsc -p tsconfig.build.json",
     "build:watch": "tsc -w -p tsconfig.build.json",
     "build:watch:express": "tsc -w -p tsconfig.hot.express.json",
-    "build:watch:nest-fastify": "tsc -w -p tsconfig.hot.nest-fastify.json",
+    "build:watch:nest-express": "rm -rf ./samples/nest-express/node_modules/@femike/swagger-protect/dist && tsc -w -p tsconfig.hot.nest-express.json",
+    "build:watch:nest-fastify": "rm -rf ./samples/nest-fastify/node_modules/@femike/swagger-protect/dist && tsc -w -p tsconfig.hot.nest-fastify.json",
     "compodoc": "compodoc -p tsconfig.build.json -s"
   },
   "repository": {
@@ -67,9 +69,7 @@
     "tsconfig-paths": "^3.10.1",
     "typescript": "^4.3.5"
   },
-  "dependencies": {
-    "path-to-regexp": "^3.2.0"
-  },
+  "dependencies": {},
   "peerDependencies": {
     "@nestjs/swagger": "^5.0.9",
     "@nestjs/common": "^7.0.0 || ^8.0.0",
@@ -78,6 +78,7 @@
     "class-transformer": "*",
     "class-validator": "*",
     "cookie-parser": "^1.4.5",
-    "fastify-cookie": "^5.3.1"
+    "fastify-cookie": "^5.3.1",
+    "rxjs": "7.3.0"
   }
 }

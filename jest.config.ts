@@ -5,6 +5,6 @@ const config: Config.InitialOptions = {
   rootDir: __dirname,
   coverageDirectory: 'coverage',
   testEnvironment: 'node',
-  testRegex: '\\.e2e-spec\\.ts',
+  testRegex: '\\.(?:e2e-)spec\\.ts',
 }
 export default config

@@ -1,21 +1,20 @@
 import { SwaggerProtect } from '@femike/swagger-protect'
-import { INestApplication, HttpServer, ValidationPipe } from '@nestjs/common'
+import { HttpServer, INestApplication, ValidationPipe } from '@nestjs/common'
 import type { NestFastifyApplication } from '@nestjs/platform-fastify'
 import { Test, TestingModule } from '@nestjs/testing'
+import { useContainer } from 'class-validator'
 import * as request from 'supertest'
+import { v4 as uuid } from 'uuid'
 import { CatsModule } from '../src/cats/cats.module'
 import { fastifyAdapter } from '../src/fastify'
-import { createSwagger, SWAGGER_PATH } from '../src/swagger'
+import { createSwagger } from '../src/swagger'
 import { SwaggerGuardMock } from './mocks/guard'
 import { SwaggerLoginMock } from './mocks/login'
-import { v4 as uuid } from 'uuid'
-import { useContainer } from 'class-validator'
 
 describe.each([
   {
     cookieKey: 'swagger_token',
     loginPath: '/login-api',
-    swaggerPath: '/' + SWAGGER_PATH + '/(.*)',
   },
 ])('forRoot() Default (e2e)', settings => {
   let app: INestApplication
@@ -45,7 +44,7 @@ describe.each([
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         CatsModule,
-        SwaggerProtect.forRoot({
+        SwaggerProtect.forRoot<'fastify'>({
           guard: guardMock,
           logIn: loginMock,
         }),
@@ -74,14 +73,14 @@ describe.each([
     server = app.getHttpServer()
   })
 
-  afterAll(async () => await app.close(), 30000)
+  afterAll(async () => await app.close())
 
   it('(GET) /api -', () => {
     return request(server)
       .get('/api')
       .expect(302)
       .then(res => {
-        expect(res.header.location).toBe('./api/static/index.html')
+        expect(res.header.location).toBe('/login-api?backUrl=/api')
       })
   })
 

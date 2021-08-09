@@ -13,8 +13,27 @@ export interface SwaggerProtectOptions {
     cookieKey?: string;
     useUI?: boolean;
 }
+export interface ExpresssSwaggerProtectOptions {
+    guard?: () => void;
+    logIn: SwaggerLogin;
+    swaggerPath?: string;
+    loginPath?: string;
+    cookieKey?: string;
+    useUI?: boolean;
+}
+export interface SettingsHook extends Omit<SwaggerProtectOptions, 'logIn' | 'useUI' | 'swaggerPath'> {
+    swaggerPath: string | RegExp;
+    loginPath: string;
+    cookieKey: string;
+}
+export declare type ExpressHookSettings = Omit<SwaggerProtectOptions, 'logIn' | 'useUI' | 'swaggerPath'> & {
+    swaggerPath?: string;
+};
 export declare type ProtectAsyncOptions = Omit<SwaggerProtectOptions, 'guard' | 'logIn'> & {
     guard: SwaggerGuard | Type<SwaggerGuardInterface>;
+    logIn: SwaggerLogin | Type<SwaggerLoginInterface>;
+};
+export declare type ExpressProtectAsyncOptions = Omit<ExpresssSwaggerProtectOptions, 'logIn'> & {
     logIn: SwaggerLogin | Type<SwaggerLoginInterface>;
 };
 export interface SwaggerProtectOptionsFactory {
@@ -25,5 +44,10 @@ export interface SwaggerProtectOptionsFactory {
 export interface SwaggerProtectAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
     name?: string;
     useFactory?: (...args: any[]) => Promise<ProtectAsyncOptions> | ProtectAsyncOptions;
+    inject?: any[];
+}
+export interface ExpressSwaggerProtectAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
+    name?: string;
+    useFactory?: (...args: any[]) => Promise<ExpressProtectAsyncOptions> | ExpressProtectAsyncOptions;
     inject?: any[];
 }

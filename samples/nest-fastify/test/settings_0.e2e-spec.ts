@@ -52,14 +52,14 @@ describe.each([
     server = app.getHttpServer()
   })
 
-  afterAll(async () => await app.close(), 30000)
+  afterAll(async () => await app.close())
 
   it('(GET) /api -', () => {
     return request(server)
       .get('/api')
       .expect(302)
       .then(res => {
-        expect(res.header.location).toBe('./api/static/index.html')
+        expect(res.header.location).toBe('/login-api?backUrl=/api')
       })
   })
 

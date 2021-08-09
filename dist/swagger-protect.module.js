@@ -17,10 +17,11 @@ exports.SwaggerProtect = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@nestjs/core");
 const serve_static_1 = require("@nestjs/serve-static");
-const cookieParser = require("cookie-parser");
 const path_1 = require("path");
 const _1 = require(".");
+const constatnt_1 = require("./constatnt");
 const swagger_protect_controller_1 = require("./swagger-protect.controller");
+const regexp_replace_1 = require("./utils/regexp-replace");
 const UI_PATH = path_1.join(__dirname, '../..', 'swagger-protect-ui/dist');
 const isClass = (ob) => /^\s*?class/.test(ob.toString());
 let SwaggerProtectCore = SwaggerProtectCore_1 = class SwaggerProtectCore {
@@ -34,20 +35,18 @@ let SwaggerProtectCore = SwaggerProtectCore_1 = class SwaggerProtectCore {
     }
     onModuleInit() {
         const { httpAdapter } = this.httpAdapterHost;
-        const server = httpAdapter.getInstance();
-        if (Object.keys(server).includes('addHook')) {
-            const { logIn, useUI, ...protect } = this.options;
+        if (httpAdapter.getType() === 'fastify') {
+            const server = httpAdapter.getInstance();
+            const { logIn, useUI, guard, ...protect } = this.options;
+            let swaggerPath = protect.swaggerPath || constatnt_1.SWAGGER_DEFAULT_PATH;
+            if (typeof swaggerPath === 'string') {
+                swaggerPath = regexp_replace_1.default(swaggerPath);
+            }
             server.addHook('onRequest', _1.fastifyProtectSwagger({
-                ...protect,
-                guard: this.guard || protect.guard,
-            }));
-        }
-        else {
-            const { logIn, useUI, ...protect } = this.options;
-            server.use(cookieParser());
-            server.use(_1.expressProtectSwagger({
-                ...protect,
-                guard: this.guard || protect.guard,
+                cookieKey: protect.cookieKey || _1.SWAGGER_COOKIE_TOKEN_KEY,
+                loginPath: protect.loginPath || _1.REDIRECT_TO_LOGIN,
+                swaggerPath: swaggerPath,
+                guard: this.guard,
             }));
         }
     }
@@ -96,7 +95,7 @@ let SwaggerProtectCore = SwaggerProtectCore_1 = class SwaggerProtectCore {
                 moduleOptions,
                 {
                     provide: _1.SWAGGER_GUARD,
-                    useValue: options.guard,
+                    useValue: options.guard || false,
                     inject: [_1.SWAGGER_GUARD],
                 },
                 swaggerLoginProvide,

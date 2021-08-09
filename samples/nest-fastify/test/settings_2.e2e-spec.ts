@@ -33,7 +33,7 @@ describe.each([
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         CatsModule,
-        SwaggerProtect.forRoot({
+        SwaggerProtect.forRoot<'fastify'>({
           guard: guardMock,
           logIn: loginMock,
           cookieKey: settings.cookieKey,
@@ -66,7 +66,7 @@ describe.each([
     server = app.getHttpServer()
   })
 
-  afterAll(async () => await app.close(), 30000)
+  afterAll(async () => await app.close())
 
   it('(GET) /api -', () => {
     return request(server)
