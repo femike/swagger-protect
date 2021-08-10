@@ -11,8 +11,8 @@ declare type FastiRequest = FastifyRequest<RouteGenericInterface, Server, Incomi
         [x: string]: string;
     };
 };
-declare function middleware<Req extends FastiRequest, Res extends FastifyReply>(settings: SettingsHook): (req: Req, reply: Res, next: HookHandlerDoneFunction) => void | Res;
+declare function middleware<Req extends FastiRequest, Res extends FastifyReply>(settings: SettingsHook): (req: Req, reply: Res, next: HookHandlerDoneFunction) => void | RouteGenericInterface;
 export declare const fastifyProtectSwagger: typeof middleware;
 export declare const registerExpressProtectSwagger: (app: INestApplication, settings: ExpressHookSettings) => void;
 export declare const expressProtectSwagger: (app: Express, settings: ExpressHookSettings) => void;
-export {};
+export { };

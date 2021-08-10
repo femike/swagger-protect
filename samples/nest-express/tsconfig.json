@@ -12,9 +12,12 @@
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
+    "types": [
+      "jest"
+    ]
   },
   "include": [
-    "src/**/*",
+    "**/*.ts",
   ],
   "exclude": [
     "node_modules",

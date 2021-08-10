@@ -1,7 +1,7 @@
 {
-  "name": "nest-typescript-starter",
+  "name": "typescript-starter-express-swagger",
   "version": "1.0.0",
-  "description": "Nest TypeScript starter repository",
+  "description": "TypeScript starter repository",
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
@@ -16,7 +16,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "echo 'No e2e tests implemented yet.'"
+    "test:e2e": "jest --testRegex=\\.e2e-spec.ts",
+    "test:e2e:watch": "jest --watch --testRegex=\\.e2e-spec.ts"
   },
   "dependencies": {
     "@femike/swagger-protect": "^2.0.0",
@@ -57,5 +58,11 @@
     "ts-node-paths": "^1.0.1",
     "tsconfig-paths": "3.10.1",
     "typescript": "4.3.5"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "verbose": true,
+    "coverageDirectory": "coverage",
+    "testRegex": "\\.spec\\.ts"
   }
 }

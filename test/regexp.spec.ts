@@ -1,4 +1,4 @@
-import replaceApi from '../src/utils/regexp-replace'
+import replaceApi from '../dist/utils/regexp-replace'
 
 describe('regexp replace', () => {
   it('replaceApi(example) single', () => {

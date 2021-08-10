@@ -3,12 +3,11 @@ import {
   SWAGGER_COOKIE_TOKEN_KEY,
   REDIRECT_TO_LOGIN,
 } from '@femike/swagger-protect/dist/constatnt'
-import * as request from 'supertest'
 import { v4 as uuid } from 'uuid'
 import type { Express } from 'express'
-import * as express from 'express'
-// import * as cookieParser from 'cookie-parser'
 import { createSwagger } from './swagger'
+import request = require('supertest')
+import express = require('express')
 
 describe.each([
   {
@@ -21,8 +20,7 @@ describe.each([
   const token = uuid()
 
   beforeAll(async () => {
-    app = express()
-    // app.use(cookieParser())
+    app = await express()
     app = createSwagger(app, {
       guard: () => false,
     })
