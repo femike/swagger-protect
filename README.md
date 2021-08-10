@@ -45,7 +45,7 @@ fastify.addHook(
         .findOneOrFail(token)
         .then(t => t.token === token),
     cookieKey: 'swagger_token', // key must be stored in cookies on login.
-    swaggerPath: 'api', // entry point will be protect with guard above.
+    swaggerPath: /^\/api\/(json|static\/index.html)(?:\/)?$/, // entry point will be protect with guard above.
     loginPath: '/login-api', // redirect on fail guard.
   }),
 )
@@ -60,7 +60,7 @@ fastifyAdapter.getInstance().addHook(
         .findOneOrFail(token)
         .then(t => t.token === token),
     cookieKey: 'swagger_token',
-    swaggerPath: 'api',
+    swaggerPath: /^\/api\/(json|static\/index.html)(?:\/)?$/,
     loginPath: '/login-api',
   }),
 )
@@ -323,13 +323,14 @@ Default url `/login-api`
 - [x] NestJS Module
 - [x] [UI - login](https://www.npmjs.com/package/@femike/swagger-protect-ui)
 - [x] [Example Page UI](https://femike.github.io/swagger-protect-ui/)
-- [ ] Sample fastify
-- [x] Sample express
-- [x] Sample nestjs fastify
-- [x] Tests e2e nest-fastify
-- [x] Tests e2e nest-express
+- [x] Sample Express
+- [x] Sample Fastify
+- [x] Sample Nestjs Express
+- [x] Sample Nestjs Fastify
 - [x] Tests e2e express
+- [x] Tests e2e nest-express
 - [ ] Tests e2e fastify
+- [x] Tests e2e nest-fastify
 - [x] Units test replaceApi
 - [ ] Units tests
 - [x] Github CI
