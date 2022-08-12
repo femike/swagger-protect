@@ -4,7 +4,7 @@ describe('regexp replace', () => {
   it('replaceApi(example) single', () => {
     const regexp = replaceApi('example')
     expect(regexp).toEqual(
-      /^\/example\/path(?:\/|-json|\/json|\/static.+|\/swagger.+)?$/,
+      /^\/example(?:\/|-json|\/json|\/static.+|\/swagger.+)?$/,
     )
     expect('/example/json').toMatch(regexp)
     expect('/example-json').toMatch(regexp)
