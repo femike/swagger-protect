@@ -1,8 +1,8 @@
+import { v4 as uuid } from 'uuid'
 import {
   SwaggerProtectLogInDto,
   SwaggerLoginInterface,
 } from '@femike/swagger-protect'
-import { v4 as uuid } from 'uuid'
 
 /**
  * Swagger Login

@@ -14,15 +14,12 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "types": [
-      "jest"
-    ]
   },
   "include": [
-    "**/*.ts"
+    "**/*.ts",
   ],
   "exclude": [
     "node_modules",
-    "dist",
+    "dist"
   ]
 }

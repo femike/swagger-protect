@@ -10,7 +10,6 @@
     "resolveJsonModule": true,
     "target": "esnext",
     "sourceMap": true,
-    "outDir": "../../backup/node_modules/@femike/swagger-protect/dist",
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,

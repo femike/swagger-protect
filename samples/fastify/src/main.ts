@@ -1,8 +1,9 @@
+import { resolve } from 'node:path'
 import { fastify } from 'fastify'
+import fastifyStatic from '@fastify/static'
+//
 import { createSwagger, SwaggerLogin } from './swagger'
 import { SwaggerProtectLogInDto } from '@femike/swagger-protect/dist/dto/login.dto'
-import fastifyStatic from 'fastify-static'
-import { resolve } from 'path'
 
 const LOGIN_API = '/login-api'
 
@@ -79,7 +80,9 @@ async function bootstrap() {
         reply.header('Content-Type', 'text/html; charset=utf-8').send(html)
       },
     )
-    .listen(3000, (err, address) => {
+    .listen({
+      port: 3000
+    }, (err, address) => {
       if (err) {
         app.log.error(err)
         process.exit(1)
@@ -87,4 +90,5 @@ async function bootstrap() {
       app.log.info(`Server listening on ${address}`)
     })
 }
+
 bootstrap()

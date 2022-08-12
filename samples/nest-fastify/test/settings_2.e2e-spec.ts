@@ -15,7 +15,7 @@ describe.each([
   {
     cookieKey: 'swagger_key',
     loginPath: '/login-me',
-    swaggerPath: /^\/api\/(json|static\/index.html)(?:\/)?$/,
+    swaggerPath: /^\/api(?:\/|\/json|\/swagger.+|\/static.+)?$/,
   },
 ])('forRoot() Simple (e2e)', settings => {
   let app: INestApplication
@@ -73,17 +73,17 @@ describe.each([
       .get('/api')
       .expect(302)
       .then(res => {
-        expect(res.header.location).toBe('./api/static/index.html')
+        expect(res.header.location).toBe(`${settings.loginPath}?backUrl=/api`)
       })
   })
 
-  it('(GET) /api/static/index.html -', () => {
+  it('(GET) /api -', () => {
     return request(server)
-      .get('/api/static/index.html')
+      .get('/api')
       .expect(302)
       .then(res => {
         expect(res.header.location).toBe(
-          settings.loginPath + '?backUrl=/api/static/index.html',
+          settings.loginPath + '?backUrl=/api',
         )
       })
   })
@@ -94,58 +94,58 @@ describe.each([
       .expect(302)
       .then(res => {
         expect(res.header.location).toBe(
-          settings.loginPath + '?backUrl=/api/json',
+          `${settings.loginPath}?backUrl=/api/json`,
         )
       })
   })
 
-  it('(GET) /api/static/index.html - with Cookie and unregistered token', () => {
+  it('(GET) /api - with Cookie and unregistered token', () => {
     return request(server)
-      .get('/api/static/index.html')
+      .get('/api')
       .set({
         Cookie: `${settings.cookieKey}=${uuid()}`,
       })
       .expect(302)
       .then(res => {
         expect(res.header.location).toBe(
-          '/login-me?backUrl=/api/static/index.html',
+          `${settings.loginPath}?backUrl=/api`,
         )
       })
   })
 
-  it('(GET) /api/json - with Cookie and unregistered token', () => {
+  it('(GET) /api/swagger-ui.css - with Cookie and unregistered token', () => {
     return request(server)
-      .get('/api/json')
+      .get('/api/swagger-ui.css')
       .set({
         Cookie: `${settings.cookieKey}=${uuid()}`,
       })
       .expect(302)
       .then(res => {
-        expect(res.header.location).toBe('/login-me?backUrl=/api/json')
+        expect(res.header.location).toBe(`${settings.loginPath}?backUrl=/api/swagger-ui.css`)
       })
   })
 
-  it('(GET) /api/static/index.html - with Cookie', () => {
+  it('(GET) /api/swagger-ui-init.js - with Cookie', () => {
     return request(server)
-      .get('/api/static/index.html')
+      .get('/api/swagger-ui-init.js')
       .set({
         Cookie: `${settings.cookieKey}=${token}`,
       })
       .expect(200)
       .then(res => {
-        expect(res.text).toContain('const ui = SwaggerUIBundle(config)')
+        expect(res.text).toContain('let ui = SwaggerUIBundle(swaggerOptions)')
       })
   })
 
-  it('(GET) /api/json - with Cookie', () => {
+  it('(GET) /api/swagger-ui-init.js - with Cookie', () => {
     return request(server)
-      .get('/api/json')
+      .get('/api/swagger-ui-init.js')
       .set({
         Cookie: `${settings.cookieKey}=${token}`,
       })
       .expect(200)
       .then(res => {
-        expect(res.text).toContain('"openapi":"3.0.0"')
+        expect(res.text).toContain('"openapi": "3.0.0"')
       })
   })
 

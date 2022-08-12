@@ -59,17 +59,17 @@ describe.each([
       .get('/api')
       .expect(302)
       .then(res => {
-        expect(res.header.location).toBe('/login-api?backUrl=/api')
+        expect(res.header.location).toBe(`${settings.loginPath}?backUrl=/api`)
       })
   })
 
-  it('(GET) /api/static/index.html -', () => {
+  it('(GET) /api/swagger-ui-init.js -', () => {
     return request(server)
-      .get('/api/static/index.html')
+      .get('/api/swagger-ui-init.js')
       .expect(302)
       .then(res => {
         expect(res.header.location).toBe(
-          settings.loginPath + '?backUrl=/api/static/index.html',
+          settings.loginPath + '?backUrl=/api/swagger-ui-init.js',
         )
       })
   })
@@ -85,16 +85,16 @@ describe.each([
       })
   })
 
-  it('(GET) /api/static/index.html - with Cookie and unregistered token', () => {
+  it('(GET) /api/swagger-ui-init.js - with Cookie and unregistered token', () => {
     return request(server)
-      .get('/api/static/index.html')
+      .get('/api/swagger-ui-init.js')
       .set({
         Cookie: `${settings.cookieKey}=${uuid()}`,
       })
       .expect(302)
       .then(res => {
         expect(res.header.location).toBe(
-          '/login-api?backUrl=/api/static/index.html',
+          `${settings.loginPath}?backUrl=/api/swagger-ui-init.js`,
         )
       })
   })
@@ -107,20 +107,22 @@ describe.each([
       })
       .expect(302)
       .then(res => {
-        expect(res.header.location).toBe('/login-api?backUrl=/api/json')
+        expect(res.header.location).toBe(
+          `${settings.loginPath}?backUrl=/api/json`,
+        )
       })
   })
 
-  it('(GET) /api/static/index.html - with Cookie', () => {
+  it('(GET) /api/swagger-ui-init.js - with Cookie', () => {
     return request(server)
-      .get('/api/static/index.html')
+      .get('/api/swagger-ui-init.js')
       .set({
         Cookie: `${settings.cookieKey}=${token}`,
       })
       .expect(302)
       .then(res => {
         expect(res.header.location).toBe(
-          '/login-api?backUrl=/api/static/index.html',
+          `${settings.loginPath}?backUrl=/api/swagger-ui-init.js`,
         )
       })
   })
@@ -133,7 +135,9 @@ describe.each([
       })
       .expect(302)
       .then(res => {
-        expect(res.header.location).toBe('/login-api?backUrl=/api/json')
+        expect(res.header.location).toBe(
+          `${settings.loginPath}?backUrl=/api/json`,
+        )
       })
   })
 

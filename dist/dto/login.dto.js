@@ -20,11 +20,11 @@ class SwaggerProtectLogInDto {
     }
 }
 __decorate([
-    class_validator_1.IsNotEmpty(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], SwaggerProtectLogInDto.prototype, "login", void 0);
 __decorate([
-    class_validator_1.IsNotEmpty(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], SwaggerProtectLogInDto.prototype, "password", void 0);
 exports.SwaggerProtectLogInDto = SwaggerProtectLogInDto;

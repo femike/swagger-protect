@@ -1,18 +1,20 @@
+import { resolve } from 'node:path'
 import { fastify } from 'fastify'
-import { createSwagger } from './swagger'
+import fastifyStatic from '@fastify/static'
 import { SwaggerProtectLogInDto } from '@femike/swagger-protect/dist/dto/login.dto'
-import fastifyStatic from 'fastify-static'
-import { resolve } from 'path'
-import type { FastifyInstance, FastifyLoggerInstance } from 'fastify'
+//
+import type { FastifyInstance, FastifyBaseLogger } from 'fastify'
 import type { IncomingMessage, Server, ServerResponse } from 'http'
 import type { SwaggerLoginMock } from './mocks/login'
+//
+import { createSwagger } from './swagger'
 import { SwaggerGuardMock } from './mocks/guard'
 
 export type FastifyApp = FastifyInstance<
   Server,
   IncomingMessage,
   ServerResponse,
-  FastifyLoggerInstance
+  FastifyBaseLogger
 >
 
 const html = `Home Page <a href="/api">API</a>`

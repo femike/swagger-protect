@@ -132,27 +132,27 @@ describe.each([
       })
   })
 
-  it('(GET) /api/static/index.html - with Cookie', () => {
+  it('(GET) /api/swagger-ui-init.js - with Cookie', () => {
     return request(server)
-      .get('/api/static/index.html')
+      .get('/api/swagger-ui-init.js')
       .set({
         Cookie: `${settings.cookieKey}=${token}`,
       })
       .expect(200)
       .then(res => {
-        expect(res.text).toContain('const ui = SwaggerUIBundle(config)')
+        expect(res.text).toContain('let ui = SwaggerUIBundle(swaggerOptions)')
       })
   })
 
-  it('(GET) /api/json - with Cookie', () => {
+  it('(GET) /api/swagger-ui-init.js - with Cookie', () => {
     return request(server)
-      .get('/api/json')
+      .get('/api/swagger-ui-init.js')
       .set({
         Cookie: `${settings.cookieKey}=${token}`,
       })
       .expect(200)
       .then(res => {
-        expect(res.text).toContain('"openapi":"3.0.0"')
+        expect(res.text).toContain('"openapi": "3.0.0"')
       })
   })
 

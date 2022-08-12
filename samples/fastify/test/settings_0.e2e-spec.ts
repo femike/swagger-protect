@@ -112,7 +112,7 @@ describe.each([
       })
       .expect(200)
       .then(res => {
-        expect(res.text).toContain('const ui = SwaggerUIBundle(config)')
+        expect(res.text).toContain('Swagger UI')
       })
   })
 
@@ -133,7 +133,7 @@ describe.each([
       .post(settings.loginPath)
       .expect(400)
       .then(res => {
-        expect(res.body.message).toContain('body should be object')
+        expect(res.body.message).toContain('body must be object')
       })
   })
 
@@ -150,7 +150,7 @@ describe.each([
       .expect(400)
       .then(res => {
         expect(res.body.message).toEqual(
-          'body.login should NOT be shorter than 3 characters',
+          'body/login must NOT have fewer than 3 characters',
         )
       })
   })
@@ -168,7 +168,7 @@ describe.each([
       .expect(400)
       .then(res => {
         expect(res.body.message).toEqual(
-          'body.password should NOT be shorter than 8 characters',
+          'body/password must NOT have fewer than 8 characters',
         )
       })
   })
@@ -186,7 +186,7 @@ describe.each([
       .expect(400)
       .then(res => {
         expect(res.body.message).toEqual(
-          'body.login should NOT be shorter than 3 characters',
+          'body/login must NOT have fewer than 3 characters',
         )
       })
   })

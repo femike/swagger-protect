@@ -2,7 +2,8 @@
   <a href="https://www.npmjs.com/package/@femike/swagger-protect" target="blank"><img src="images/logo.svg" width="120" alt="Swagger Protect Logo" /></a>
 </p>
 <p align="center">
-<a href="https://www.npmjs.com/org/femike"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/org/femike"><img src="https://img.shields.io/github/package-json/v/nestjs/nest/v9.0.1?label=%40nestjs%2Fcore" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/org/femike"><img src="https://img.shields.io/npm/v/@femike/swagger-protect.svg" alt="NPM Version" /></a>
 <a href="https://www.npmjs.com/org/femike"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
 <a href="https://www.npmjs.com/org/femike"><img src="https://img.shields.io/npm/dm/@femike/swagger-protect.svg" alt="NPM Downloads" /></a>
 <!-- <a href="#"><img src="https://img.shields.io/badge/donate-PayPal-ff3f59.svg" alt="Donate PayPal" /></a> -->
@@ -16,11 +17,11 @@ A small tool to protect access to the openapi user interface. Creates a mechanis
 ## Installation
 
 ```bash
-$ npm install @femike/swagger-protect
+npm install @femike/swagger-protect
 ```
 
 ```bash
-$ yarn add @femike/swagger-protect
+yarn add @femike/swagger-protect
 ```
 
 ### Swagger protect Fastify hook
@@ -37,7 +38,7 @@ import { TokenEntity } from 'your-application/src/entities'
 fastify.addHook(
   'onRequest',
   fastifyProtectSwagger({
-    cookieGuard: (
+    guard: (
       token, // must return boolean result (token: string) => Promise<boolean> for example typeorm find token on fail return false
     ) =>
       getConnection()
@@ -45,7 +46,7 @@ fastify.addHook(
         .findOneOrFail(token)
         .then(t => t.token === token),
     cookieKey: 'swagger_token', // key must be stored in cookies on login.
-    swaggerPath: /^\/api\/(json|static\/index.html)(?:\/)?$/, // entry point will be protect with guard above.
+    swaggerPath: 'api', // entry point will be protect with guard above.
     loginPath: '/login-api', // redirect on fail guard.
   }),
 )
@@ -54,7 +55,7 @@ fastify.addHook(
 fastifyAdapter.getInstance().addHook(
   'onRequest',
   fastifyProtectSwagger({
-    cookieGuard: token =>
+    guard: token =>
       getConnection()
         .getRepository(TokenEntity)
         .findOneOrFail(token)
@@ -70,7 +71,7 @@ When guard return `true`, hook go to the next way and show swagger open api page
 
 If guard return `false`, user will be redirected to the page `/login-api`
 
-> info **Hint** Your must create frontend application with sign-in form and set cookie
+> **Hint** Your must create frontend application with sign-in form and set cookie
 > with `swagger_token` key setted above on succesfuly login.
 
 > Or use `@femike/swager-protect-ui` see below.
@@ -103,7 +104,7 @@ bootstrap()
 
 ### Swagger protect NestJS Module for Express
 
-> Warning **Warning** Express have no method override exists routes we must register protect middleware before setup Swagger.
+> **Warning** Express have no method override exists routes we must register protect middleware before setup Swagger.
 
 ```typescript
 // touch ./src/swagger/config.ts
@@ -135,7 +136,7 @@ export function createSwagger(app: INestApplication): INestApplication {
 }
 ```
 
-> info **Hint** Parrameters `guard`, `swaggerPath` `loginPath` and `cookieKey` have no effect in module `SwaggerProtect` when we use `express`.
+> **Hint** Parrameters `guard`, `swaggerPath` `loginPath` and `cookieKey` have no effect in module `SwaggerProtect` when we use `express`.
 
 ```typescript
 // ./src/main.ts
@@ -212,9 +213,9 @@ export class SwaggerGuard implements SwaggerGuardInterface {
 
 Now register module `SwaggerProtect`
 
-> info **Hint** Fastify middleware give little bit more than Express, `swaggerPath` meight be `RegExp` it can protect not only `swagger openapi UI`.
+> **Hint** Fastify middleware give little bit more than Express, `swaggerPath` meight be `RegExp` it can protect not only `swagger openapi UI`.
 
-> Warning **Warning** But remember if you override this option you must protect two entry points `/api/json` and `/api/static/index.html` in this `RegExp`
+> **Warning** But remember if you override this option you must protect two entry points `/api/json` and `/api/static/index.html` in this `RegExp`
 
 ```typescript
 // ./src/app.module.ts
@@ -243,7 +244,7 @@ import { SwaggerProtect } from '@femike/swagger-protect'
 export class AppModule {}
 ```
 
-> Warning **Warning** The controller `login-api` uses `ClassSerializer` you have to add `ValidationPipe` and container for fallback errors.
+> **Warning** The controller `login-api` uses `ClassSerializer` you have to add `ValidationPipe` and container for fallback errors.
 
 ```typescript
 // ./src/main.ts
@@ -263,7 +264,7 @@ export class AppModule {}
 
 ```
 
-> info **Hint** If `useUI` options is not disabled, module creates controller with answered path `/login-api` on `GET` request redirect to static `index.html` UI on `POST` passed data to callback function or injected class implemented from `SwaggerLoginInterface` response pass data to UI where on success setted Cookie.
+> **Hint** If `useUI` options is not disabled, module creates controller with answered path `/login-api` on `GET` request redirect to static `index.html` UI on `POST` passed data to callback function or injected class implemented from `SwaggerLoginInterface` response pass data to UI where on success setted Cookie.
 
 ```mermaid
 graph TD;
@@ -286,35 +287,45 @@ The `forRoot()` method takes an options object with a few useful properties.
 | -------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `guard`        | Function / Class | Function or Class guard must be return boolean result. Class meight be implemented `SwaggerGuardInterface`. Default: `(token: string) => !!token` |
 | `logIn`        | Function / Class | Function or Class logIn must return object with key token. Class meight be implemented `SwaggerLoginInterface`. Default: `() => ({ token: '' })`  |
-| `swaggerPath?` | string / RegExp  | Default: RegExp `/^\/api(?:\/\|-json\|\/static\/index\.html)?$` for `fastify`                                                                     |
+| `swaggerPath?` | string / RegExp  | Default: RegExp `/^\/api(?:\/|-json|\/json|\/static.+|\/swagger.+)?$/` for `fastify`                                                              |
 | `loginPath?`   | string           | Path where user will be redirect on fail guard. Default `/login-api`                                                                              |
 | `cookieKey?`   | string           | Key name stored in Cookie. Default `swagger_token`                                                                                                |
 | `useUI?`       | Boolean          | Use or not user interface for login to swagger ui. When loginPath was changed from `/login-api` ui will be disabled. Default `true`               |
 
 ## Examples
 
-See full examples https://github.com/femike/swagger-protect/tree/main/samples.
+See full examples [https://github.com/femike/swagger-protect/tree/main/samples](https://github.com/femike/swagger-protect/tree/main/samples).
 
 ## UI
 
 ### Installation
 
 ```bash
-$ npm i @femike/swagger-protect-ui
+npm i @femike/swagger-protect-ui
 ```
 
 ```bash
-$ yarn add @femike/swagger-protect-ui
+yarn add @femike/swagger-protect-ui
 ```
 
 Default url `/login-api`
 
-> info **Hint** UI have no settings, it must be only disabled by options `useUI`: `false` in `forRoot()` or `forRootAsync()`
+> **Hint** UI have no settings, it must be only disabled by options `useUI`: `false` in `forRoot()` or `forRootAsync()`
 > Form send `POST` request to `/login-api` with data `{ login, password }` on response set Cookie with default key `swagger_token`
 
 <p align="center">
 <img width="540" src="https://github.com/femike/swagger-protect-ui/raw/main/images/screen_1.png"></img>
 </p>
+
+## Known Issue
+
+> **Warning** If you want to use global prefix dont forget set exclude path `login-api`
+
+```ts
+app.setGlobalPrefix('api/v1', {
+  exclude: ['login-api'],
+})
+```
 
 ## Roadmap
 
@@ -323,14 +334,13 @@ Default url `/login-api`
 - [x] NestJS Module
 - [x] [UI - login](https://www.npmjs.com/package/@femike/swagger-protect-ui)
 - [x] [Example Page UI](https://femike.github.io/swagger-protect-ui/)
-- [x] Sample Express
-- [x] Sample Fastify
-- [x] Sample Nestjs Express
-- [x] Sample Nestjs Fastify
-- [x] Tests e2e express
-- [x] Tests e2e nest-express
-- [x] Tests e2e fastify
+- [x] Sample fastify
+- [x] Sample express
+- [x] Sample nestjs fastify
 - [x] Tests e2e nest-fastify
+- [x] Tests e2e nest-express
+- [x] Tests e2e express
+- [x] Tests e2e fastify
 - [x] Units test replaceApi
 - [ ] Units tests
 - [x] Github CI

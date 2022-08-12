@@ -1,7 +1,9 @@
+import fastifySwagger from '@fastify/swagger'
+import { fastifyCookie } from '@fastify/cookie'
 import { fastifyProtectSwagger } from '@femike/swagger-protect'
+//
 import type { FastifyInstance } from 'fastify'
-import { fastifySwagger } from 'fastify-swagger'
-import { fastifyCookie } from 'fastify-cookie'
+//
 import { SwaggerGuard } from './guard'
 
 export const SWAGGER_PATH = 'api'

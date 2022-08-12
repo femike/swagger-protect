@@ -1,22 +1,7 @@
-import { DynamicModule, OnModuleInit } from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
-import { SwaggerGuardInterface } from './interfaces';
-import type { ExpresssSwaggerProtectOptions, ExpressSwaggerProtectAsyncOptions, SwaggerProtectAsyncOptions, SwaggerProtectOptions } from './types';
-declare class SwaggerProtectCore implements OnModuleInit {
-    private readonly httpAdapterHost;
-    private readonly options;
-    private readonly guard;
-    constructor(httpAdapterHost: HttpAdapterHost, options: SwaggerProtectOptions, guard: SwaggerGuardInterface);
-    onModuleInit(): void;
-    static forRoot<A extends 'fastify' | 'express' | unknown>(options: A extends 'fastify' ? SwaggerProtectOptions : A extends 'express' | unknown ? ExpresssSwaggerProtectOptions : never): DynamicModule;
-    private static provideUI;
-    static forRootAsync<A extends 'fastify' | 'express' | unknown>(options: A extends 'fastify' ? SwaggerProtectAsyncOptions : A extends 'express' | unknown ? ExpressSwaggerProtectAsyncOptions : never): Promise<DynamicModule>;
-    private static createProvider;
-    private static createAsyncProviders;
-    private static createAsyncOptionsProvider;
+import type { DynamicModule } from '@nestjs/common';
+import type { Options, OptionsAsync } from './types';
+import { SwaggerProtectHost } from './swagger-protect-host.module';
+export declare class SwaggerProtect extends SwaggerProtectHost {
+    static forRoot<Adapter = 'fastify' | 'express'>(options: Options<Adapter>): DynamicModule;
+    static forRootAsync<Adapter = 'fastify' | 'express'>(options: OptionsAsync<Adapter>): Promise<DynamicModule>;
 }
-export declare class SwaggerProtect extends SwaggerProtectCore {
-    static forRoot<A extends 'fastify' | 'express' | unknown>(options: A extends 'fastify' ? SwaggerProtectOptions : A extends 'express' | unknown ? ExpresssSwaggerProtectOptions : never): DynamicModule;
-    static forRootAsync<A extends 'fastify' | 'express' | unknown>(options: A extends 'fastify' ? SwaggerProtectAsyncOptions : A extends 'express' | unknown ? ExpressSwaggerProtectAsyncOptions : never): Promise<DynamicModule>;
-}
-export {};

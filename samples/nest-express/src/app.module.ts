@@ -6,13 +6,14 @@ import { SwaggerLogin } from './swagger'
 @Module({
   imports: [
     CatsModule,
-    SwaggerProtect.forRoot({
-      guard: () => false, // guard required but no effect on express
+    SwaggerProtect.forRoot<'express'>({
+      // guard: () => false, // guard required but no effect on express
       logIn: new SwaggerLogin(),
       swaggerPath: 'api', // no effect on express
-      loginPath: '/login-api', // no effect on express
+      loginPath: '/login-api', // no effect on express 
       cookieKey: 'swagger_token', // no effect on express
-    }),
-  ],
-})
+      useUI: false
+    }),  
+  ], 
+}) 
 export class AppModule {}

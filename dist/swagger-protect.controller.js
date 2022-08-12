@@ -49,27 +49,27 @@ let SwaggerProtectController = class SwaggerProtectController {
     }
 };
 __decorate([
-    common_1.Get(),
-    __param(0, common_1.Res()),
-    __param(1, common_1.Query('backUrl')),
+    (0, common_1.Get)(['', '*']),
+    __param(0, (0, common_1.Res)()),
+    __param(1, (0, common_1.Query)('backUrl')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", void 0)
 ], SwaggerProtectController.prototype, "entry", null);
 __decorate([
-    common_1.Post(),
-    swagger_1.ApiForbiddenResponse(),
-    common_1.UseInterceptors(common_1.ClassSerializerInterceptor),
-    __param(0, common_1.Body()),
+    (0, common_1.Post)(),
+    (0, swagger_1.ApiForbiddenResponse)(),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [login_dto_1.SwaggerProtectLogInDto]),
     __metadata("design:returntype", Object)
 ], SwaggerProtectController.prototype, "post", null);
 SwaggerProtectController = __decorate([
-    swagger_1.ApiTags('swagger-protect'),
-    common_1.Controller('login-api'),
-    __param(0, common_1.Inject(_1.SWAGGER_PROTECT_OPTIONS)),
-    __param(1, common_1.Inject(_1.SWAGGER_LOGIN)),
+    (0, swagger_1.ApiTags)('swagger-protect'),
+    (0, common_1.Controller)('login-api'),
+    __param(0, (0, common_1.Inject)(_1.SWAGGER_PROTECT_OPTIONS)),
+    __param(1, (0, common_1.Inject)(_1.SWAGGER_LOGIN)),
     __metadata("design:paramtypes", [Object, Object])
 ], SwaggerProtectController);
 exports.SwaggerProtectController = SwaggerProtectController;
