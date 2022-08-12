@@ -2,7 +2,9 @@
   <a href="https://www.npmjs.com/package/@femike/swagger-protect" target="blank"><img src="images/logo.svg" width="120" alt="Swagger Protect Logo" /></a>
 </p>
 <p align="center">
-<a href="https://www.npmjs.com/org/femike"><img src="https://img.shields.io/github/package-json/v/nestjs/nest/v9.0.1?label=%40nestjs%2Fcore" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/org/femike"><img src="https://img.shields.io/github/package-json/v/nestjs/nest/v9.0.1?label=%40nestjs%2Fcore" alt="NestJS Version" /></a>
+<a href="https://www.npmjs.com/org/femike"><img src="https://img.shields.io/github/package-json/v/expressjs/express/4.18.1?label=express" alt="Express Version" /></a>
+<a href="https://www.npmjs.com/org/femike"><img src="https://img.shields.io/github/package-json/v/fastify/fastify/v4.4.0?label=fastify" alt="Fastify Version" /></a>
 <a href="https://www.npmjs.com/org/femike"><img src="https://img.shields.io/npm/v/@femike/swagger-protect.svg" alt="NPM Version" /></a>
 <a href="https://www.npmjs.com/org/femike"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
 <a href="https://www.npmjs.com/org/femike"><img src="https://img.shields.io/npm/dm/@femike/swagger-protect.svg" alt="NPM Downloads" /></a>
@@ -14,14 +16,19 @@
 
 A small tool to protect access to the openapi user interface. Creates a mechanism for checking the request URL: `/ api / *` and checks for the existence of a Cookie `swagger_token`, if a cookie is present, checks its validity through a callback, in case of failure, redirects to the authorization page `/login-api/index.html?backUrl=/path/to/openapi/ui`. After successfuly authorization, returns to the `backUrl`.
 
+### Versions compability
+
+- `^2.0.1` Supports: **Express** `v4.17`, **Fastify** `v3`, **NestJS** `v7`- `v8`
+- `^9.0.2` Supports: **Express** `v4.18`, **Fastify** `v4`, **NestJS** `v9`
+
 ## Installation
 
 ```bash
-npm install @femike/swagger-protect
+npm install @femike/swagger-protect@^2.0.1 # or @^9.0.2 for nestjs v9
 ```
 
 ```bash
-yarn add @femike/swagger-protect
+yarn add @femike/swagger-protect@^2.0.1
 ```
 
 ### Swagger protect Fastify hook

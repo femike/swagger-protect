@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14.x, 16.x]
+        node-version: [16.x, 18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
     - uses: actions/checkout@v2
@@ -25,26 +25,50 @@ jobs:
     - run: npm install
     - run: npm run test:unit
       
-    - name: Use Node.js ${{ matrix.node-version }} Express
+    - name: Use Node.js ${{ matrix.node-version }} Express v4.17
       run: | 
         npm install
         npm run test:e2e
-      working-directory: samples/express
+      working-directory: samples/express/v4.17
+
+    - name: Use Node.js ${{ matrix.node-version }} Express v4.18
+      run: | 
+        npm install
+        npm run test:e2e
+      working-directory: samples/express/v4.18
       
-    - name: Use Node.js ${{ matrix.node-version }} Fastify
+    - name: Use Node.js ${{ matrix.node-version }} Fastify v3
       run: |
         npm install
         npm run test:e2e
-      working-directory: samples/fastify
+      working-directory: samples/fastify/v3
 
-    - name: Use Node.js ${{ matrix.node-version }} Nest Fastify
+    - name: Use Node.js ${{ matrix.node-version }} Fastify v4
       run: |
         npm install
         npm run test:e2e
-      working-directory: samples/nest-fastify
+      working-directory: samples/fastify/v4
 
-    - name: Use Node.js ${{ matrix.node-version }} Nest Express
+    - name: Use Node.js ${{ matrix.node-version }} Nest 8 Fastify 3
       run: |
         npm install
         npm run test:e2e
-      working-directory: samples/nest-express
+      working-directory: samples/nest_v8/fastify
+
+    - name: Use Node.js ${{ matrix.node-version }} Nest 9 Fastify 4
+      run: |
+        npm install
+        npm run test:e2e
+      working-directory: samples/nest_v9/fastify
+
+    - name: Use Node.js ${{ matrix.node-version }} Nest 8 Express
+      run: |
+        npm install
+        npm run test:e2e
+      working-directory: samples/nest_v8/express
+
+    - name: Use Node.js ${{ matrix.node-version }} Nest 9 Express
+      run: |
+        npm install
+        npm run test:e2e
+      working-directory: samples/nest_v9/express
