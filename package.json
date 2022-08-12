@@ -6,7 +6,10 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "test": "jest",
-    "ci": ".github/ci"
+    "test:unit": "jest --testRegex=regexp.spec.ts",
+    "ci": ".github/ci",
+    "prebuild": "rm -rf ./dist",
+    "build": "tsc -p tsconfig.build.json"
   },
   "repository": {
     "type": "git",
