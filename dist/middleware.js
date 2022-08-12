@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.expressProtectSwagger = exports.registerExpressProtectSwagger = exports.fastifyProtectSwagger = void 0;
+const cookie_parser_1 = require("cookie-parser");
+const path_to_regexp_1 = require("path-to-regexp");
 const common_1 = require("@nestjs/common");
-const cookieParser = require("cookie-parser");
-const pathToRegexp = require("path-to-regexp");
-const constatnt_1 = require("./constatnt");
 const utils_1 = require("./utils");
+const constatnt_1 = require("./constatnt");
 function middlewareTest(req, reply, next, settings, url) {
     try {
         const token = req.cookies[settings.cookieKey || constatnt_1.SWAGGER_COOKIE_TOKEN_KEY];
@@ -29,13 +29,13 @@ function middlewareTest(req, reply, next, settings, url) {
     catch (err) {
         return reply
             .status(common_1.HttpStatus.FOUND)
-            .redirect(`${url}&message=${escape(err.message)}`);
+            .redirect(`${url}&message=${decodeURI(err.message)}`);
     }
     return reply.status(common_1.HttpStatus.FOUND).redirect(url);
 }
 function middleware(settings) {
     return (req, reply, next) => {
-        const url = settings.loginPath + `?backUrl=${escape(req.url)}`;
+        const url = settings.loginPath + `?backUrl=${decodeURI(req.url)}`;
         const path = settings.swaggerPath;
         if (settings.swaggerPath instanceof RegExp) {
             if (settings.swaggerPath.test(req.url))
@@ -44,7 +44,7 @@ function middleware(settings) {
                 return next();
         }
         else if (typeof path === 'string') {
-            const regexp = pathToRegexp(path);
+            const regexp = (0, path_to_regexp_1.default)(path);
             if (regexp.test(req.url))
                 middlewareTest(req, reply, next, settings, url);
             else
@@ -58,14 +58,15 @@ function middleware(settings) {
 exports.fastifyProtectSwagger = middleware;
 const registerExpressProtectSwagger = (app, settings) => {
     const httpAdapter = app.getHttpAdapter();
-    exports.expressProtectSwagger(httpAdapter, settings);
+    (0, exports.expressProtectSwagger)(httpAdapter, settings);
 };
 exports.registerExpressProtectSwagger = registerExpressProtectSwagger;
 const expressProtectSwagger = (app, settings) => {
-    app.use(cookieParser());
-    const path = utils_1.validatePath(settings.swaggerPath || constatnt_1.SWAGGER_DEFAULT_PATH);
+    app.use((0, cookie_parser_1)());
+    const path = (0, utils_1.validatePath)(settings.swaggerPath || constatnt_1.SWAGGER_DEFAULT_PATH);
     const middle = (req, res, next) => {
-        const url = (settings.loginPath || constatnt_1.REDIRECT_TO_LOGIN) + `?backUrl=${escape(req.url)}`;
+        const url = (settings.loginPath || constatnt_1.REDIRECT_TO_LOGIN) +
+            `?backUrl=${decodeURI(req.url)}`;
         return middlewareTest(req, res, next, {
             cookieKey: settings.cookieKey || constatnt_1.SWAGGER_COOKIE_TOKEN_KEY,
             guard: settings.guard,

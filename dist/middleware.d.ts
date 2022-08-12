@@ -1,18 +1,18 @@
-/// <reference types="node" />
-import { INestApplication } from '@nestjs/common';
+import type { INestApplication } from '@nestjs/common';
 import type { Express } from 'express';
-import type { FastifyRequest, HookHandlerDoneFunction } from 'fastify';
-import type { FastifyReply } from 'fastify/types/reply';
+import type { onRequestHookHandler } from 'fastify';
 import type { RouteGenericInterface } from 'fastify/types/route';
-import type { IncomingMessage, Server } from 'http';
 import type { ExpressHookSettings, SettingsHook } from './types';
-declare type FastiRequest = FastifyRequest<RouteGenericInterface, Server, IncomingMessage> & {
+export declare type Cookies = {
     cookies: {
         [x: string]: string;
     };
 };
-declare function middleware<Req extends FastiRequest, Res extends FastifyReply>(settings: SettingsHook): (req: Req, reply: Res, next: HookHandlerDoneFunction) => void | RouteGenericInterface;
+declare type OnHookRequestReq = Parameters<onRequestHookHandler>['0'];
+declare type OnHookRequestReply = Parameters<onRequestHookHandler>['1'];
+declare type OnHookRequestDone = Parameters<onRequestHookHandler>['2'];
+declare function middleware<Req extends OnHookRequestReq, Res extends OnHookRequestReply>(settings: SettingsHook): (req: Req, reply: Res, next: OnHookRequestDone) => void | RouteGenericInterface;
 export declare const fastifyProtectSwagger: typeof middleware;
 export declare const registerExpressProtectSwagger: (app: INestApplication, settings: ExpressHookSettings) => void;
 export declare const expressProtectSwagger: (app: Express, settings: ExpressHookSettings) => void;
-export { };
+export {};
