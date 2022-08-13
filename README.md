@@ -12,6 +12,18 @@
 <a href="https://yoomoney.ru/to/41001486944398/250"><img src="https://img.shields.io/badge/donate-%D0%AEMoney-blueviolet.svg" alt="Donate ЮMoney" /></a>
 </p>
 
+# :bookmark_tabs: {#menu}
+
+- [Fastify Hook](#swagger-protect-fastify-hook)
+- [Express Middleware](#swagger-protect-express-middleware)
+- [NestJS For Express](#swagger-protect-nestjs-module-for-express)
+- [NestJS For Fastify](#swagger-protect-nestjs-module-for-fastify)
+- [API Spec](#api-spec)
+- [Examples](#examples)
+- [UI Module](#user-interface)
+- [Known Issues](#known-issues)
+- [Roadmap](#roadmap)
+
 ## Description
 
 A small tool to protect access to the openapi user interface. Creates a mechanism for checking the request URL: `/ api / *` and checks for the existence of a Cookie `swagger_token`, if a cookie is present, checks its validity through a callback, in case of failure, redirects to the authorization page `/login-api/index.html?backUrl=/path/to/openapi/ui`. After successfuly authorization, returns to the `backUrl`.
@@ -19,12 +31,12 @@ A small tool to protect access to the openapi user interface. Creates a mechanis
 ### Versions compability
 
 - `^2.0.1` Supports: **Express** `v4.17`, **Fastify** `v3`, **NestJS** `v7`- `v8`
-- `^9.0.2` Supports: **Express** `v4.18`, **Fastify** `v4`, **NestJS** `v9`
+- `^9.0.3` Supports: **Express** `v4.18`, **Fastify** `v4`, **NestJS** `v9`
 
 ## Installation
 
 ```bash
-npm install @femike/swagger-protect@^2.0.1 # or @^9.0.2 for nestjs v9
+npm install @femike/swagger-protect@^2.0.1 # or @^9.0.3 for nestjs v9
 ```
 
 ```bash
@@ -32,6 +44,8 @@ yarn add @femike/swagger-protect@^2.0.1
 ```
 
 ### Swagger protect Fastify hook
+
+[:small_red_triangle:up](#menu "Up to menu")
 
 Easy way to protect swagger with fastify use a hook.
 
@@ -78,14 +92,16 @@ When guard return `true`, hook go to the next way and show swagger open api page
 
 If guard return `false`, user will be redirected to the page `/login-api`
 
-> **Hint** Your must create frontend application with sign-in form and set cookie
+> **Note** Your must create frontend application with sign-in form and set cookie
 > with `swagger_token` key setted above on succesfuly login.
 
-> Or use `@femike/swager-protect-ui` see below.
+> Or use `@femike/swager-protect-ui` see [below](#user-interface).
 
 ### Swagger protect Express middleware
 
-> Warning **Warning** Cookie-parser must be import before setup protect middleware.
+[:small_red_triangle:up](#menu "Up to menu")
+
+> **Warning** Cookie-parser must be import before setup protect middleware.
 
 ```typescript
 // ./src/main.ts
@@ -111,7 +127,9 @@ bootstrap()
 
 ### Swagger protect NestJS Module for Express
 
-> **Warning** Express have no method override exists routes we must register protect middleware before setup Swagger.
+[:small_red_triangle:up](#menu "Up to menu")
+
+> **Warning** `Express` have no methods override exists routes, we must register middleware before setup `Swagger`.
 
 ```typescript
 // touch ./src/swagger/config.ts
@@ -143,7 +161,7 @@ export function createSwagger(app: INestApplication): INestApplication {
 }
 ```
 
-> **Hint** Parrameters `guard`, `swaggerPath` `loginPath` and `cookieKey` have no effect in module `SwaggerProtect` when we use `express`.
+> **Note** Parrameters `guard`, `swaggerPath` `loginPath` and `cookieKey` have no effect in module `SwaggerProtect` when we using `Express`.
 
 ```typescript
 // ./src/main.ts
@@ -194,6 +212,8 @@ Example `login` service must be implemented from `SwaggerLoginInterface`
 
 ### Swagger protect NestJS Module for Fastify
 
+[:small_red_triangle:up](#menu "Up to menu")
+
 Create class `guard` must be implemented from `SwaggerGuardInterface`
 
 ```typescript
@@ -220,7 +240,7 @@ export class SwaggerGuard implements SwaggerGuardInterface {
 
 Now register module `SwaggerProtect`
 
-> **Hint** Fastify middleware give little bit more than Express, `swaggerPath` meight be `RegExp` it can protect not only `swagger openapi UI`.
+> **Note** `Fastify` middleware give little bit more than `Express`, `swaggerPath` meight be `RegExp` It can protect not only `swagger openapi UI`.
 
 > **Warning** But remember if you override this option you must protect two entry points `/api/json` and `/api/static/index.html` in this `RegExp`
 
@@ -271,7 +291,7 @@ export class AppModule {}
 
 ```
 
-> **Hint** If `useUI` options is not disabled, module creates controller with answered path `/login-api` on `GET` request redirect to static `index.html` UI on `POST` passed data to callback function or injected class implemented from `SwaggerLoginInterface` response pass data to UI where on success setted Cookie.
+> **Note** If `useUI` options is not disabled, module creates controller with answered path `/login-api` on `GET` request redirect to static `index.html` `UI` on `POST` request passed data to callback function or injected class implemented from `SwaggerLoginInterface` response return data to `UI` where on success set `Cookie`.
 
 ```mermaid
 graph TD;
@@ -288,24 +308,31 @@ graph TD;
 
 ## API Spec
 
+[:small_red_triangle:up](#menu "Up to menu")
+
 The `forRoot()` method takes an options object with a few useful properties.
 
 | Property       | Type             | Description                                                                                                                                       |
 | -------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `guard`        | Function / Class | Function or Class guard must be return boolean result. Class meight be implemented `SwaggerGuardInterface`. Default: `(token: string) => !!token` |
 | `logIn`        | Function / Class | Function or Class logIn must return object with key token. Class meight be implemented `SwaggerLoginInterface`. Default: `() => ({ token: '' })`  |
-| `swaggerPath?` | string / RegExp  | Default: RegExp `/^\/api(?:\/|-json|\/json|\/static.+|\/swagger.+)?$/` for `fastify`                                                              |
+| `swaggerPath?` | string / RegExp  | Default: RegExp `/^\/api(?:\/\|-json\|\/json\|\/static.+\|\/swagger.+)?$/` for `fastify`                                                          |
 | `loginPath?`   | string           | Path where user will be redirect on fail guard. Default `/login-api`                                                                              |
 | `cookieKey?`   | string           | Key name stored in Cookie. Default `swagger_token`                                                                                                |
 | `useUI?`       | Boolean          | Use or not user interface for login to swagger ui. When loginPath was changed from `/login-api` ui will be disabled. Default `true`               |
 
 ## Examples
 
-See full examples [https://github.com/femike/swagger-protect/tree/main/samples](https://github.com/femike/swagger-protect/tree/main/samples).
+[:small_red_triangle:up](#menu "Up to menu")
 
-## UI
+> **Note** See full examples on `Github` [@femike/swagger-protect/tree/main/samples](https://github.com/femike/swagger-protect/tree/main/samples)
+>
 
-### Installation
+## UI Module {#user-interface}
+
+[:small_red_triangle:up](#menu "Up to menu")
+
+### Installation ui module
 
 ```bash
 npm i @femike/swagger-protect-ui
@@ -315,16 +342,18 @@ npm i @femike/swagger-protect-ui
 yarn add @femike/swagger-protect-ui
 ```
 
-Default url `/login-api`
+Default url: `/login-api`
 
-> **Hint** UI have no settings, it must be only disabled by options `useUI`: `false` in `forRoot()` or `forRootAsync()`
+> **Note** UI have no settings, it can be only disabled with options `useUI`: `false` in `forRoot()` or `forRootAsync()`
 > Form send `POST` request to `/login-api` with data `{ login, password }` on response set Cookie with default key `swagger_token`
 
 <p align="center">
 <img width="540" src="https://github.com/femike/swagger-protect-ui/raw/main/images/screen_1.png"></img>
 </p>
 
-## Known Issue
+## Known Issues
+
+[:small_red_triangle:up](#menu "Up to menu")
 
 > **Warning** If you want to use global prefix dont forget set exclude path `login-api`
 
@@ -335,6 +364,8 @@ app.setGlobalPrefix('api/v1', {
 ```
 
 ## Roadmap
+
+[:small_red_triangle:up](#menu "Up to menu")
 
 - [x] Fastify Hook
 - [x] Express Middleware
