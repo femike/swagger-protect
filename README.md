@@ -20,7 +20,7 @@
 - [NestJS For Fastify](#swagger-protect-nestjs-module-for-fastify)
 - [API Spec](#api-spec)
 - [Examples](#examples)
-- [UI Module](#user-interface)
+- [UI Module](#ui-module)
 - [Known Issues](#known-issues)
 - [Roadmap](#roadmap)
 
@@ -94,7 +94,7 @@ If guard return `false`, user will be redirected to the page `/login-api`
 > **Note** Your must create frontend application with sign-in form and set cookie
 > with `swagger_token` key setted above on succesfuly login.
 
-> Or use `@femike/swager-protect-ui` see [below](#user-interface).
+> Or use `@femike/swager-protect-ui` see [below](#ui-module).
 
 ### Swagger protect Express middleware
 
@@ -327,7 +327,7 @@ The `forRoot()` method takes an options object with a few useful properties.
 > **Note** See full examples on `Github` [@femike/swagger-protect/tree/main/samples](https://github.com/femike/swagger-protect/tree/main/samples)
 >
 
-## UI Module {#user-interface}
+## UI Module
 
 [:small_red_triangle:up](#bookmark_tabs "Up to menu")
 
