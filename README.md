@@ -12,7 +12,7 @@
 <a href="https://yoomoney.ru/to/41001486944398/250"><img src="https://img.shields.io/badge/donate-%D0%AEMoney-blueviolet.svg" alt="Donate ЮMoney" /></a>
 </p>
 
-# :bookmark_tabs: {#menu}
+# :bookmark_tabs:
 
 - [Fastify Hook](#swagger-protect-fastify-hook)
 - [Express Middleware](#swagger-protect-express-middleware)
@@ -45,7 +45,7 @@ yarn add @femike/swagger-protect@^2.0.1
 
 ### Swagger protect Fastify hook
 
-[:small_red_triangle:up](#menu "Up to menu")
+[:small_red_triangle:up](#bookmark_tabs "Up to menu")
 
 Easy way to protect swagger with fastify use a hook.
 
@@ -71,7 +71,6 @@ fastify.addHook(
     loginPath: '/login-api', // redirect on fail guard.
   }),
 )
-
 // For NestJS With Fastify as Adapter hook for module see below.
 fastifyAdapter.getInstance().addHook(
   'onRequest',
@@ -99,7 +98,7 @@ If guard return `false`, user will be redirected to the page `/login-api`
 
 ### Swagger protect Express middleware
 
-[:small_red_triangle:up](#menu "Up to menu")
+[:small_red_triangle:up](#bookmark_tabs "Up to menu")
 
 > **Warning** Cookie-parser must be import before setup protect middleware.
 
@@ -127,7 +126,7 @@ bootstrap()
 
 ### Swagger protect NestJS Module for Express
 
-[:small_red_triangle:up](#menu "Up to menu")
+[:small_red_triangle:up](#bookmark_tabs "Up to menu")
 
 > **Warning** `Express` have no methods override exists routes, we must register middleware before setup `Swagger`.
 
@@ -212,7 +211,7 @@ Example `login` service must be implemented from `SwaggerLoginInterface`
 
 ### Swagger protect NestJS Module for Fastify
 
-[:small_red_triangle:up](#menu "Up to menu")
+[:small_red_triangle:up](#bookmark_tabs "Up to menu")
 
 Create class `guard` must be implemented from `SwaggerGuardInterface`
 
@@ -308,7 +307,7 @@ graph TD;
 
 ## API Spec
 
-[:small_red_triangle:up](#menu "Up to menu")
+[:small_red_triangle:up](#bookmark_tabs "Up to menu")
 
 The `forRoot()` method takes an options object with a few useful properties.
 
@@ -323,14 +322,14 @@ The `forRoot()` method takes an options object with a few useful properties.
 
 ## Examples
 
-[:small_red_triangle:up](#menu "Up to menu")
+[:small_red_triangle:up](#bookmark_tabs "Up to menu")
 
 > **Note** See full examples on `Github` [@femike/swagger-protect/tree/main/samples](https://github.com/femike/swagger-protect/tree/main/samples)
 >
 
 ## UI Module {#user-interface}
 
-[:small_red_triangle:up](#menu "Up to menu")
+[:small_red_triangle:up](#bookmark_tabs "Up to menu")
 
 ### Installation ui module
 
@@ -353,7 +352,7 @@ Default url: `/login-api`
 
 ## Known Issues
 
-[:small_red_triangle:up](#menu "Up to menu")
+[:small_red_triangle:up](#bookmark_tabs "Up to menu")
 
 > **Warning** If you want to use global prefix dont forget set exclude path `login-api`
 
@@ -365,7 +364,7 @@ app.setGlobalPrefix('api/v1', {
 
 ## Roadmap
 
-[:small_red_triangle:up](#menu "Up to menu")
+[:small_red_triangle:up](#bookmark_tabs "Up to menu")
 
 - [x] Fastify Hook
 - [x] Express Middleware
